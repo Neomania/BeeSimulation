@@ -10,7 +10,7 @@
 #-------------------------------------------------------------------------------
 
 def main():
-    import pygame, sys, os, random, ui, math
+    import pygame, sys, os, random, ui, math, globalcfg
     import pygame.freetype
     clock = pygame.time.Clock()
     pygame.init()
@@ -24,20 +24,21 @@ def main():
     WHITE = (255,255,255)
     mousePos = (0,0)
     displaySurface = pygame.display.set_mode((1000,750))
-    speedMultiplier = 1 #SPECIFIES HOW MANY TIMES THE PHYSICS LOOP RUNS
+    scrollSpeed = 5
 
     #FONTS
     testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
     pygame.freetype.init()
+
     infoFontSize = 12
     infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 
     def reduceSpeed():
-        if speedMultiplier > 0:
-            speedMultiplier = speedMultiplier - 1
+        if globalcfg.speedMultiplier > 0:
+            globalcfg.speedMultiplier = globalcfg.speedMultiplier - 1
     def increaseSpeed():
-        speedMultiplier = speedMultiplier + 1
+        globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
     def divideStringIntoList(stringToDivide,lineLength):
         stringLength = len(stringToDivide) - 1
         spacePointer = 0
@@ -61,7 +62,6 @@ def main():
             else:
                 returnList.append(stringToDivide[endOfLastLinePointer:])
         return returnList
-
     #DEFINING UI ELEMENTS
     buttonArray = []
     buttonArray.append(ui.Button(750,437,62,63, #SLOWDOWN BUTTON
@@ -84,12 +84,26 @@ def main():
         mousePos = pygame.mouse.get_pos()
 
         #PHYSICS, DECISION, ALL NON-UI ACTIONS
-        for potato in range(0,speedMultiplier):
+        for potato in range(0,globalcfg.speedMultiplier):
             pass
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == MOUSEBUTTONDOWN:
+                if event.button == 4: #MOUSEWHEELUP, SCROLL DOWN
+                    for div in textDivisionArray:
+                        if div.rect.collidepoint(mousePos):
+                            div.scrollAmount = div.scrollAmount - scrollSpeed
+                elif event.button == 5:#MOUSEWHEELDOWN
+                    for div in textDivisionArray:
+                        if div.rect.collidepoint(mousePos) and div.scrollAmount < 0:
+                            div.scrollAmount = div.scrollAmount + scrollSpeed
+                elif event.button == 1: #LEFT MOUSE CLICK
+                    for button in buttonArray:
+                        if button.rect.collidepoint(mousePos) and button.clickable:
+                            button.proc()
+                            print(globalcfg.speedMultiplier)
         #DRAW SIMULATION
 
         #DRAW BASE UI
@@ -98,7 +112,8 @@ def main():
         for div in textDivisionArray:
             lineNumber = 0
             for line in div.textArray:
-                div.font.render_to(displaySurface,(div.xPos,div.yPos + (lineNumber * (div.fontSize[1] + 8))),line,WHITE)
+                if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount >= div.yPos and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount < div.height:
+                    div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + 8))),line,WHITE)
                 lineNumber = lineNumber + 1
         #DRAW BUTTONS
         for button in buttonArray:

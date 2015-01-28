@@ -22,7 +22,7 @@ class Button:
     unclickableRect = pygame.Rect
     clickable = True
 
-    def __init__(self,xPos,yPos,width,height,spriteImage,procCall = None):
+    def __init__(self,xPos,yPos,width,height,spriteImage,procCall = None,parameters = None):
         import pygame
         self.rect = pygame.Rect(xPos,yPos,width,height)
         self.clickable = True
@@ -32,11 +32,14 @@ class Button:
         self.mouseOverRect = pygame.Rect(width,0,width,height)
         self.clickedRect = pygame.Rect(2*width,0,width,height)
         self.unclickableRect = pygame.Rect(3*width,0,width,height)
+        self.parameters = parameters
     def proc(self):
         if self.procCall == None:
             print("No procedure specified")
-        else:
+        elif self.parameters == None:
             self.procCall()
+        else:
+            self.procCall(self.parameters)
 class textDivision:
     import pygame
     import pygame.freetype
@@ -48,8 +51,10 @@ class textDivision:
         self.yPos = yPos
         self.width = width
         self.height = height
+        self.rect = pygame.Rect(xPos,yPos,width,height)
         self.textArray = []
         self.font = fontToUse
+        self.scrollAmount = 0
         testCharacter = fontToUse.render('a',(255,255,255))
         self.fontSize = (testCharacter[0].get_width()
         + round(testCharacter[0].get_width() / 10)
