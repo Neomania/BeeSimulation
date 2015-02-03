@@ -12,6 +12,7 @@
 def main():
     import pygame, sys, os, random, ui, math, globalcfg
     import pygame.freetype
+    from ui import buttonArray, textDivisionArray
     clock = pygame.time.Clock()
     pygame.init()
     FPS = 60
@@ -34,11 +35,11 @@ def main():
     infoFontSize = 12
     infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 
-    def reduceSpeed():
-        if globalcfg.speedMultiplier > 0:
-            globalcfg.speedMultiplier = globalcfg.speedMultiplier - 1
-    def increaseSpeed():
-        globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
+##    def reduceSpeed():
+##        if globalcfg.speedMultiplier > 0:
+##            globalcfg.speedMultiplier = globalcfg.speedMultiplier - 1
+##    def increaseSpeed():
+##        globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
     def divideStringIntoList(stringToDivide,lineLength):
         stringLength = len(stringToDivide) - 1
         spacePointer = 0
@@ -63,21 +64,22 @@ def main():
                 returnList.append(stringToDivide[endOfLastLinePointer:])
         return returnList
     #DEFINING UI ELEMENTS
-    buttonArray = []
-    buttonArray.append(ui.Button(750,437,62,63, #SLOWDOWN BUTTON
-    'assets/ui/reduceSpeed.png',reduceSpeed))
-    buttonArray.append(ui.Button(812,437,63,63, #SPEEDUP BUTTON
-    'assets/ui/increaseSpeed.png',increaseSpeed))
-    buttonArray.append(ui.Button(875,375,125,125, #NEW FLOWER BUTTON
-    'assets/ui/newFlower.png'))
+##    buttonArray = []
+##    reduceSpeedButton = (ui.Button(750,437,62,63, #SLOWDOWN BUTTON
+##    'assets/ui/reduceSpeed.png',reduceSpeed))
+##    buttonArray.append(reduceSpeedButton)
+##    increaseSpeedButton = (ui.Button(812,437,63,63, #SPEEDUP BUTTON
+##    'assets/ui/increaseSpeed.png',increaseSpeed))
+##    buttonArray.append(increaseSpeedButton)
+##    newFlowerButton = (ui.Button(875,375,125,125, #NEW FLOWER BUTTON
+##    'assets/ui/newFlower.png'))
+##    buttonArray.append(newFlowerButton)
 
-    textDivisionArray = []
-    infoBoxDivision = (ui.textDivision(750,0,250,300,infoFont,infoFontSize)) #INFOBOX
-    textDivisionArray.append(infoBoxDivision)
-    print(infoBoxDivision.characterWidth)
-    infoBoxDivision.textArray = divideStringIntoList(
-    testString,infoBoxDivision.characterWidth)
-
+##    textDivisionArray = []
+##    infoBoxDivision = (ui.textDivision(750,0,250,300,infoFont,infoFontSize)) #INFOBOX
+##    textDivisionArray.append(infoBoxDivision)
+##    infoBoxDivision.textArray = divideStringIntoList(
+##    testString,infoBoxDivision.characterWidth)
 
     while True: #MAIN GAME LOOP
         displaySurface.fill(BLACK)
@@ -93,28 +95,39 @@ def main():
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 4: #MOUSEWHEELUP, SCROLL DOWN
                     for div in textDivisionArray:
-                        if div.rect.collidepoint(mousePos):
+                        if div.rect.collidepoint(mousePos) and div.scrollable:
                             div.scrollAmount = div.scrollAmount - scrollSpeed
                 elif event.button == 5:#MOUSEWHEELDOWN
                     for div in textDivisionArray:
-                        if div.rect.collidepoint(mousePos) and div.scrollAmount < 0:
+                        if div.rect.collidepoint(mousePos) and div.scrollable and div.scrollAmount < 0:
                             div.scrollAmount = div.scrollAmount + scrollSpeed
                 elif event.button == 1: #LEFT MOUSE CLICK
                     for button in buttonArray:
                         if button.rect.collidepoint(mousePos) and button.clickable:
                             button.proc()
-                            print(globalcfg.speedMultiplier)
+                            ui.speedDivision.textArray = divideStringIntoList(
+                            str("speed: " + str(globalcfg.speedMultiplier) + 'x'
+                            ),
+                            ui.speedDivision.characterWidth)
+                            print(ui.speedDivision.textArray)
+
         #DRAW SIMULATION
 
         #DRAW BASE UI
 
         #DRAW TEXT
-        for div in textDivisionArray:
+        for div in ui.textDivisionArray:
             lineNumber = 0
-            for line in div.textArray:
-                if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount >= div.yPos and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount < div.height:
-                    div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + 8))),line,WHITE)
-                lineNumber = lineNumber + 1
+            if div.textArray != None:
+                for line in div.textArray:
+                    if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount + div.yPos >= div.yPos and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount <= div.height:
+                        div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + 8))),line,WHITE)
+                    else:
+                        #print(line)
+                        pass
+                    lineNumber = lineNumber + 1
+            else:
+                print("NONE AAA")
         #DRAW BUTTONS
         for button in buttonArray:
             if button.clickable:
