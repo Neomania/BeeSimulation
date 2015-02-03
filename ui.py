@@ -12,10 +12,9 @@ from functions import *
 from fonts import *
 import globalcfg, pygame
 
-testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In efficitur malesuada felis, in pharetra tellus vehicula gravida. Fusce sed interdum lorem. Nam facilisis ex nunc, vitae suscipit libero faucibus nec. Pellentesque mollis laoreet elit, eu pulvinar mauris mattis vitae. Quisque sapien diam, pretium ut posuere non, elementum a ante. Cras a feugiat mauris. Vestibulum ornare nibh sit amet magna accumsan ullamcorper. Donec faucibus ex non viverra suscipit. Sed ut turpis id arcu convallis elementum. Praesent non hendrerit metus, consectetur placerat leo. Duis elementum enim eu nisi porttitor, in rutrum diam finibus. Suspendisse et mi vitae lacus molestie vulputate. Nam id turpis aliquam, porttitor sapien sed, dictum augue. Sed placerat ante leo, quis vulputate metus scelerisque quis. Quisque urna massa, blandit eget lobortis et, fermentum quis augue. Etiam eget nunc efficitur, pretium elit nec, consectetur diam. Praesent risus urna, venenatis id orci at, scelerisque pharetra elit. Donec consequat tellus quis lacus varius, vel cursus nisi porttitor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae"
 
-
-def divideStringIntoList(stringToDivide,lineLength):
+def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
     stringLength = len(stringToDivide) - 1
     spacePointer = 0
     endOfLastLinePointer = 0
@@ -25,15 +24,20 @@ def divideStringIntoList(stringToDivide,lineLength):
 
     while currentPointer < stringLength:
         charactersSoFar = 0
-        while charactersSoFar < lineLength and currentPointer < stringLength:
+        while charactersSoFar < lineLength and currentPointer < stringLength and stringToDivide[currentPointer] != '@':
             if stringToDivide[currentPointer] == ' ':
                 spacePointer = currentPointer
             currentPointer = currentPointer + 1
             charactersSoFar = charactersSoFar + 1
-        if currentPointer < stringLength: #checks why it exited the loop
+        if currentPointer < stringLength and stringToDivide[currentPointer] != '@': #checks why it exited the loop
             returnList.append(
             stringToDivide[endOfLastLinePointer:spacePointer])
             currentPointer = spacePointer + 1
+            endOfLastLinePointer = currentPointer
+        elif stringToDivide[currentPointer] == '@':
+            returnList.append(
+            stringToDivide[endOfLastLinePointer:currentPointer])
+            currentPointer = currentPointer + 1
             endOfLastLinePointer = currentPointer
         else:
             returnList.append(stringToDivide[endOfLastLinePointer:])

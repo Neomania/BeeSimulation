@@ -40,29 +40,6 @@ def main():
 ##            globalcfg.speedMultiplier = globalcfg.speedMultiplier - 1
 ##    def increaseSpeed():
 ##        globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
-    def divideStringIntoList(stringToDivide,lineLength):
-        stringLength = len(stringToDivide) - 1
-        spacePointer = 0
-        endOfLastLinePointer = 0
-        currentPointer = 0
-        charactersSoFar = 0
-        returnList = []
-
-        while currentPointer < stringLength:
-            charactersSoFar = 0
-            while charactersSoFar < lineLength and currentPointer < stringLength:
-                if stringToDivide[currentPointer] == ' ':
-                    spacePointer = currentPointer
-                currentPointer = currentPointer + 1
-                charactersSoFar = charactersSoFar + 1
-            if currentPointer < stringLength: #checks why it exited the loop
-                returnList.append(
-                stringToDivide[endOfLastLinePointer:spacePointer])
-                currentPointer = spacePointer + 1
-                endOfLastLinePointer = currentPointer
-            else:
-                returnList.append(stringToDivide[endOfLastLinePointer:])
-        return returnList
     #DEFINING UI ELEMENTS
 ##    buttonArray = []
 ##    reduceSpeedButton = (ui.Button(750,437,62,63, #SLOWDOWN BUTTON
@@ -120,7 +97,7 @@ def main():
             lineNumber = 0
             if div.textArray != None:
                 for line in div.textArray:
-                    if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount + div.yPos >= div.yPos and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount <= div.height:
+                    if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount >= 0 and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount <= div.height:
                         div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + 8))),line,WHITE)
                     else:
                         #print(line)
