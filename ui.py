@@ -95,6 +95,8 @@ class textDivision:
         ,testCharacter[0].get_height())
         self.characterWidth = math.floor(self.width / (self.fontSize[0])) #rough height
 
+baseUI = pygame.image.load('assets/ui/baseui.png')
+
 buttonArray = []
 reduceSpeedButton = (Button(750,437,62,63, #SLOWDOWN BUTTON
 'assets/ui/reduceSpeed.png',reduceSpeed))

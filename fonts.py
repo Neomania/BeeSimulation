@@ -13,8 +13,5 @@ import pygame.freetype
 pygame.freetype.init()
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
-speedFontSize = 20
-speedFont = pygame.freetype.SysFont('Consolas',speedFontSize)
-
-if __name__ == '__main__':
-    main()
+speedFontSize = 26
+speedFont = pygame.freetype.SysFont('Helvetica',speedFontSize)
