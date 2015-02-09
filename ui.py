@@ -106,6 +106,7 @@ class Video:
     import pygame
     def __init__(self,filepath,width,height,fontHeightAndSpacing):
         import pygame, math
+        pygame.init()
         self.movie = pygame.movie.Movie(filepath)
         self.movieSurface = pygame.Surface((width,height))
         self.movie.set_display(self.movieSurface)
@@ -128,18 +129,20 @@ def prepareDetail(detailString): #parses detail string into elements
         if detailString[i] == "#":
             if mode == "image":
                 #PROCESS IMAGE STRING
+                mode = "normal"
                 workingChar = 0
                 workingString = ""
-                while workingChar != ",":
-                    filePath = filePath + detailString[workingChar]
+                filePath = ""
+                while imageString[workingChar] != ",":
+                    filePath = filePath + imageString[workingChar]
                     workingChar = workingChar + 1
                 workingChar = workingChar + 1
-                while workingChar != ",":
-                    workingString = workingString + detailString[workingChar]
+                while imageString[workingChar] != ",":
+                    workingString = workingString + imageString[workingChar]
                     workingChar = workingChar + 1
                 eleWidth = int(workingString)
                 workingChar = workingChar + 1
-                eleHeight = int(detailString[workingChar:])
+                eleHeight = int(imageString[workingChar:])
                 detailElements.append(Image(filePath,eleWidth,eleHeight,
                 detailTextDiv.fontSize[1] + detailTextDiv.lineSpace))
                 for k in range(0,detailElements[len(detailElements) - 1].characterHeight):
@@ -153,18 +156,20 @@ def prepareDetail(detailString): #parses detail string into elements
         elif detailString[i] == "^":
             if mode == "video":
                 #PROCESS VIDEO STRING
+                mode = "normal"
                 workingChar = 0
                 workingString = ""
-                while workingChar != ",":
-                    filePath = filePath + detailString[workingChar]
+                filePath = ""
+                while videoString[workingChar] != ",":
+                    filePath = filePath + videoString[workingChar]
                     workingChar = workingChar + 1
                 workingChar = workingChar + 1
-                while workingChar != ",":
-                    workingString = workingString + detailString[workingChar]
+                while videoString[workingChar] != ",":
+                    workingString = workingString + videoString[workingChar]
                     workingChar = workingChar + 1
                 eleWidth = int(workingString)
                 workingChar = workingChar + 1
-                eleHeight = int(detailString[workingChar:])
+                eleHeight = int(videoString[workingChar:])
                 detailElements.append(Video(filePath,eleWidth,eleHeight,
                 detailTextDiv.fontSize[1] + detailTextDiv.lineSpace))
                 for k in range(0,detailElements[len(detailElements) - 1].characterHeight):
@@ -215,3 +220,7 @@ speedDivision.textArray = ['speed: 1x']
 detailSurface = pygame.Surface((750,750))
 detailTextDiv = textDivision(25,0,700,700,detailedFont,detailedFontSize,True)
 detailElements = []
+
+#DEBUG
+prepareDetail(open("testdetail.txt").read())
+print(detailElements)
