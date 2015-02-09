@@ -9,28 +9,33 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
-class Entity:
-    def __init__(self,xPos = 0.0,yPos = 0.0):
-        self.summaryText = 'undefined'
-        if summaryFilePath != None:
-            summaryFile = open(summaryFilePath,'r')
-            self.summaryText = summaryFile.read()
-        else:
-            self.summaryText = 'undefined'
-        self.xPos = xPos
-        self.yPos = yPos
-
-class Bee(Entity):
+class Bee:
     summaryText = open('assets/summary/bee.txt','r').read()
-    def __init__(self,xPos,yPos):
-        Entity.__init__(xPos,yPos)
-
+    def __init__(self,hive):
+        self.xPos = hive.xPos
+        self.yPos = hive.yPos
+        self.vel = 1
+        self.direction = 0
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
         while self.direction < 0:
             self.direction = self.direction + 360
-class danceFloor(Entity):
+    def updatePosition(self):
+        import math
+        self.direction = self.direction + 2
+        self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
+        self.yPos = self.yPos + (self.vel * math.sin(math.radians(self.direction)))
+class DanceFloor:
+    radius = 20
     def __init__(self,xPos,yPos):
-        Entity.__init__(xPos,yPos)
+        self.xPos = xPos
+        self.yPos = yPos
         self.occupied = False
+
+class Hive:
+    radius = 20
+    def __init__(self,xPos,yPos):
+        self.xPos = xPos
+        self.yPos = yPos
+        self.pollenStore = 0

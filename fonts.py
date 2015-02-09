@@ -15,3 +15,4 @@ infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 speedFontSize = 26
 speedFont = pygame.freetype.SysFont('Helvetica',speedFontSize)
+detailedFontSize = 12
