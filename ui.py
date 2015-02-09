@@ -94,6 +94,24 @@ class textDivision:
         + round(testCharacter[0].get_width() / 10)
         ,testCharacter[0].get_height())
         self.characterWidth = math.floor(self.width / (self.fontSize[0])) #rough height
+        self.lineSpace = round(self.fontSize[1]/1.2)
+class Video:
+    import pygame
+    def __init__(self,filepath,width,height,fontHeightAndSpacing):
+        import pygame, math
+        self.movie = pygame.movie.Movie(filepath)
+        self.movieSurface = pygame.Surface((width,height))
+        self.movie.set_display(self.movieSurface)
+        self.width = width
+        self.height = height
+        self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
+
+def prepareDetail(detailString): #parses detail string into elements
+    global detailElements
+    detailElements = []
+    for i in range(0,len(detailString)):
+        pass
+
 
 baseUI = pygame.image.load('assets/ui/baseui.png')
 
@@ -118,3 +136,8 @@ testString,infoBoxDivision.characterWidth)
 speedDivision = textDivision(750,375,125,62,speedFont,speedFontSize)
 textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
+
+#DETAILS
+detailSurface = pygame.Surface((750,750))
+detailTextDiv = ui.textDivision(25,0,700,700,detailedFont,detailedFontSize,True)
+detailElements = []

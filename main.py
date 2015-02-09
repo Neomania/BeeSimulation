@@ -12,7 +12,8 @@
 def main():
     import pygame, sys, os, random, ui, math, globalcfg
     import pygame.freetype
-    from ui import buttonArray, textDivisionArray, baseUI
+    from ui import buttonArray, textDivisionArray, baseUI, detailSurface,
+    detailTextDiv,detailElements
     clock = pygame.time.Clock()
     pygame.init()
     FPS = 60
@@ -27,6 +28,7 @@ def main():
     displaySurface = pygame.display.set_mode(
     (globalcfg.windowWidth,globalcfg.windowHeight))
     scrollSpeed = 5
+    displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 
     #PHYSICS
     simHeight = 750
@@ -55,6 +57,7 @@ def main():
 
     while True: #MAIN GAME LOOP
         displaySurface.fill(BLACK)
+        detailSurface.fill(BLACK)
         mousePos = pygame.mouse.get_pos()
 
         #PHYSICS, DECISION, ALL NON-UI ACTIONS
@@ -112,8 +115,8 @@ def main():
             lineNumber = 0
             if div.textArray != None:
                 for line in div.textArray:
-                    if (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount >= 0 and (lineNumber * (div.fontSize[1] + 8)) + div.scrollAmount <= div.height:
-                        div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1]))),line,WHITE)
+                    if (lineNumber * (div.fontSize[1] + div.lineSpace)) + div.scrollAmount >= 0 and (lineNumber * (div.fontSize[1] + div.lineSpace)) + div.scrollAmount <= div.height:
+                        div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + div.lineSpace))),line,WHITE)
                     else:
                         #print(line)
                         pass
