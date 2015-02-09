@@ -95,6 +95,13 @@ class textDivision:
         ,testCharacter[0].get_height())
         self.characterWidth = math.floor(self.width / (self.fontSize[0])) #rough height
         self.lineSpace = round(self.fontSize[1]/1.2)
+class Image:
+    def __init__(self,filepath,width,height,fontHeightAndSpacing):
+        import pygame,math
+        self.imageSurface = pygame.image.load(filepath)
+        self.width = width
+        self.height = height
+        self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
 class Video:
     import pygame
     def __init__(self,filepath,width,height,fontHeightAndSpacing):
@@ -109,8 +116,75 @@ class Video:
 def prepareDetail(detailString): #parses detail string into elements
     global detailElements
     detailElements = []
+    preElementString = ""
+    imageString = ""
+    videoString = ""
+    filePath = ""
+    workingString = ""
+    mode = "normal"
+    eleWidth = 0
+    eleHeight = 0
     for i in range(0,len(detailString)):
-        pass
+        if detailString[i] == "#":
+            if mode == "image":
+                #PROCESS IMAGE STRING
+                workingChar = 0
+                workingString = ""
+                while workingChar != ",":
+                    filePath = filePath + detailString[workingChar]
+                    workingChar = workingChar + 1
+                workingChar = workingChar + 1
+                while workingChar != ",":
+                    workingString = workingString + detailString[workingChar]
+                    workingChar = workingChar + 1
+                eleWidth = int(workingString)
+                workingChar = workingChar + 1
+                eleHeight = int(detailString[workingChar:])
+                detailElements.append(Image(filePath,eleWidth,eleHeight,
+                detailTextDiv.fontSize[1] + detailTextDiv.lineSpace))
+                for k in range(0,detailElements[len(detailElements) - 1].characterHeight):
+                    preElementString = preElementString + "@"
+            elif mode == "normal":
+                detailElements = detailElements + divideStringIntoList(
+                preElementString,700)
+                preElementString = ""
+                mode = "image"
+                imageString = ""
+        elif detailString[i] == "^":
+            if mode == "video":
+                #PROCESS VIDEO STRING
+                workingChar = 0
+                workingString = ""
+                while workingChar != ",":
+                    filePath = filePath + detailString[workingChar]
+                    workingChar = workingChar + 1
+                workingChar = workingChar + 1
+                while workingChar != ",":
+                    workingString = workingString + detailString[workingChar]
+                    workingChar = workingChar + 1
+                eleWidth = int(workingString)
+                workingChar = workingChar + 1
+                eleHeight = int(detailString[workingChar:])
+                detailElements.append(Video(filePath,eleWidth,eleHeight,
+                detailTextDiv.fontSize[1] + detailTextDiv.lineSpace))
+                for k in range(0,detailElements[len(detailElements) - 1].characterHeight):
+                    preElementString = preElementString + "@"
+            elif mode == "normal":
+                detailElements = detailElements + divideStringIntoList(
+                preElementString,700)
+                preElementString = ""
+                mode = "video"
+                videoString = ""
+        else:
+            if mode == "image":
+                imageString = imageString + detailString[i]
+            elif mode == "video":
+                videoString = videoString + detailString[i]
+            else:
+                preElementString = preElementString + detailString[i]
+    if mode == "normal":
+        detailElements = detailElements + divideStringIntoList(
+        preElementString,700)
 
 
 baseUI = pygame.image.load('assets/ui/baseui.png')
@@ -139,5 +213,5 @@ speedDivision.textArray = ['speed: 1x']
 
 #DETAILS
 detailSurface = pygame.Surface((750,750))
-detailTextDiv = ui.textDivision(25,0,700,700,detailedFont,detailedFontSize,True)
+detailTextDiv = textDivision(25,0,700,700,detailedFont,detailedFontSize,True)
 detailElements = []

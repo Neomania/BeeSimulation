@@ -12,8 +12,7 @@
 def main():
     import pygame, sys, os, random, ui, math, globalcfg
     import pygame.freetype
-    from ui import buttonArray, textDivisionArray, baseUI, detailSurface,
-    detailTextDiv,detailElements
+    from ui import buttonArray, textDivisionArray, baseUI, detailSurface, detailTextDiv,detailElements
     clock = pygame.time.Clock()
     pygame.init()
     FPS = 60
