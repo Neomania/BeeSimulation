@@ -12,6 +12,7 @@ from functions import *
 from fonts import *
 import globalcfg, pygame
 
+DEVPINK = (255,0,255)
 testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In efficitur malesuada felis, in pharetra tellus vehicula gravida. Fusce sed interdum lorem. Nam facilisis ex nunc, vitae suscipit libero faucibus nec. Pellentesque mollis laoreet elit, eu pulvinar mauris mattis vitae. Quisque sapien diam, pretium ut posuere non, elementum a ante. Cras a feugiat mauris. Vestibulum ornare nibh sit amet magna accumsan ullamcorper. Donec faucibus ex non viverra suscipit. Sed ut turpis id arcu convallis elementum. Praesent non hendrerit metus, consectetur placerat leo. Duis elementum enim eu nisi porttitor, in rutrum diam finibus. Suspendisse et mi vitae lacus molestie vulputate. Nam id turpis aliquam, porttitor sapien sed, dictum augue. Sed placerat ante leo, quis vulputate metus scelerisque quis. Quisque urna massa, blandit eget lobortis et, fermentum quis augue. Etiam eget nunc efficitur, pretium elit nec, consectetur diam. Praesent risus urna, venenatis id orci at, scelerisque pharetra elit. Donec consequat tellus quis lacus varius, vel cursus nisi porttitor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae"
 
 def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
@@ -107,6 +108,7 @@ class Video:
     def __init__(self,filepath,width,height,fontHeightAndSpacing):
         import pygame, math
         pygame.init()
+        pygame.mixer.quit()
         self.movie = pygame.movie.Movie(filepath)
         self.movieSurface = pygame.Surface((width,height))
         self.movie.set_display(self.movieSurface)
@@ -149,7 +151,7 @@ def prepareDetail(detailString): #parses detail string into elements
                     preElementString = preElementString + "@"
             elif mode == "normal":
                 detailElements = detailElements + divideStringIntoList(
-                preElementString,700)
+                preElementString,detailTextDiv.characterWidth)
                 preElementString = ""
                 mode = "image"
                 imageString = ""
@@ -176,7 +178,7 @@ def prepareDetail(detailString): #parses detail string into elements
                     preElementString = preElementString + "@"
             elif mode == "normal":
                 detailElements = detailElements + divideStringIntoList(
-                preElementString,700)
+                preElementString,detailTextDiv.characterWidth)
                 preElementString = ""
                 mode = "video"
                 videoString = ""
@@ -217,10 +219,16 @@ textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
 
 #DETAILS
-detailSurface = pygame.Surface((750,750))
-detailTextDiv = textDivision(25,0,700,700,detailedFont,detailedFontSize,True)
+detailSurface = pygame.Surface((700,700))
+detailTextDiv = textDivision(25,0,700,750,detailedFont,detailedFontSize,True)
 detailElements = []
+detailSurface.set_colorkey(DEVPINK)
+
 
 #DEBUG
+textDivisionArray.append(detailTextDiv)
 prepareDetail(open("testdetail.txt").read())
 print(detailElements)
+for element in detailElements:
+    if type(element) is Video:
+        element.movie.play()

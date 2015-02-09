@@ -10,11 +10,10 @@
 #-------------------------------------------------------------------------------
 
 def main():
-    import pygame, sys, os, random, ui, math, globalcfg
+    import pygame, sys, os, random, ui, math, globalcfg, fonts
     import pygame.freetype
     from ui import buttonArray, textDivisionArray, baseUI, detailSurface, detailTextDiv,detailElements
     clock = pygame.time.Clock()
-    pygame.init()
     FPS = 60
     DEVPINK = (255,0,255)
     RED = (255,0,0)
@@ -27,7 +26,7 @@ def main():
     displaySurface = pygame.display.set_mode(
     (globalcfg.windowWidth,globalcfg.windowHeight))
     scrollSpeed = 5
-    displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
+    displayingDetail = True #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 
     #PHYSICS
     simHeight = 750
@@ -60,9 +59,10 @@ def main():
         mousePos = pygame.mouse.get_pos()
 
         #PHYSICS, DECISION, ALL NON-UI ACTIONS
-        for potato in range(0,globalcfg.speedMultiplier):
-            for bee in beeArray:
-                bee.updatePosition()
+        if displayingDetail == False:
+            for potato in range(0,globalcfg.speedMultiplier):
+                for bee in beeArray:
+                    bee.updatePosition()
 
         #USER INPUT HANDLING
         for event in pygame.event.get():
@@ -70,11 +70,11 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
-                if event.button == 4: #MOUSEWHEELUP, SCROLL DOWN
+                if event.button == 5: #MOUSEWHEELDOWN
                     for div in textDivisionArray:
                         if div.rect.collidepoint(mousePos) and div.scrollable:
                             div.scrollAmount = div.scrollAmount - scrollSpeed
-                elif event.button == 5:#MOUSEWHEELDOWN
+                elif event.button == 4:#MOUSEWHEELUP
                     for div in textDivisionArray:
                         if div.rect.collidepoint(mousePos) and div.scrollable and div.scrollAmount < 0:
                             div.scrollAmount = div.scrollAmount + scrollSpeed
@@ -109,6 +109,28 @@ def main():
         displaySurface.blit(simSurface,(0,0))
         #DRAW BASE UI
         displaySurface.blit(baseUI,(0,0))
+        #DETAIL BITS
+        if displayingDetail == True:
+            #DRAW DETAIL BASE
+            detailSurface.fill(DEVPINK)
+            lineNumber = 0
+            for element in detailElements:
+                if type(element) is str:
+                    if 25 + (lineNumber * (detailTextDiv.fontSize[1] +
+                    detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount >= 0:
+                        fonts.detailedFont.render_to(
+                        detailSurface,
+                        (0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
+                         detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount)
+                         ,element,WHITE)
+                    lineNumber = lineNumber + 1
+                elif type(element) is ui.Video:
+                    detailSurface.blit(element.movieSurface,(0,(lineNumber * (detailTextDiv.fontSize[1] +
+                     detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
+                elif type(element) is ui.Image:
+                    detailSurface.blit(element.imageSurface,(0,(lineNumber * (detailTextDiv.fontSize[1] +
+                     detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
+            displaySurface.blit(detailSurface,(25,0))
         #DRAW TEXT
         for div in ui.textDivisionArray:
             lineNumber = 0
