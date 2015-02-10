@@ -90,12 +90,11 @@ class textDivision:
         self.font = fontToUse
         self.scrollAmount = 0
         self.scrollable = scrollable
-        testCharacter = fontToUse.render('a',(255,255,255))
-        self.fontSize = (testCharacter[0].get_width()
-        + round(testCharacter[0].get_width() / 10)
+        testCharacter = fontToUse.render('abcdefghijklmnopqrstuvwxyz',(255,255,255))
+        self.fontSize = (round((testCharacter[0].get_width()/26))
         ,testCharacter[0].get_height())
         self.characterWidth = math.floor(self.width / (self.fontSize[0])) #rough height
-        self.lineSpace = round(self.fontSize[1]/1.2)
+        self.lineSpace = 0 #round(self.fontSize[1]/1.2) #no longer needed
 class Image:
     def __init__(self,filepath,width,height,fontHeightAndSpacing):
         import pygame,math
@@ -108,7 +107,7 @@ class Video:
     def __init__(self,filepath,width,height,fontHeightAndSpacing):
         import pygame, math
         pygame.init()
-        pygame.mixer.quit()
+        pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
         self.movie = pygame.movie.Movie(filepath)
         self.movieSurface = pygame.Surface((width,height))
         self.movie.set_display(self.movieSurface)

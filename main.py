@@ -26,7 +26,7 @@ def main():
     displaySurface = pygame.display.set_mode(
     (globalcfg.windowWidth,globalcfg.windowHeight))
     scrollSpeed = 5
-    displayingDetail = True #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
+    displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 
     #PHYSICS
     simHeight = 750
@@ -52,6 +52,8 @@ def main():
     infoFontSize = 12
     infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
     beeArray.append(Bee(home))
+
+    detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 
     while True: #MAIN GAME LOOP
         displaySurface.fill(BLACK)
@@ -125,12 +127,13 @@ def main():
                          ,element,WHITE)
                     lineNumber = lineNumber + 1
                 elif type(element) is ui.Video:
-                    detailSurface.blit(element.movieSurface,(0,(lineNumber * (detailTextDiv.fontSize[1] +
+                    detailSurface.blit(element.movieSurface,(0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
                      detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
                 elif type(element) is ui.Image:
-                    detailSurface.blit(element.imageSurface,(0,(lineNumber * (detailTextDiv.fontSize[1] +
+                    detailSurface.blit(element.imageSurface,(0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
                      detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
             displaySurface.blit(detailSurface,(25,0))
+            displaySurface.blit(detailOverlay,(0,0))
         #DRAW TEXT
         for div in ui.textDivisionArray:
             lineNumber = 0
