@@ -104,17 +104,24 @@ class Image:
         self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
 class Video:
     import pygame
-    def __init__(self,filepath,width,height,fontHeightAndSpacing):
+    def __init__(self,filepath,width,height,fontHeightAndSpacing,lineNumber):
         import pygame, math
-        pygame.init()
         pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
+        self.rect = pygame.Rect(round((700-width)/2)
+        ,lineNumber * fontHeightAndSpacing,width,height)
+        self.filepath = filepath
         self.movie = pygame.movie.Movie(filepath)
         self.movieSurface = pygame.Surface((width,height))
         self.movie.set_display(self.movieSurface)
         self.width = width
         self.height = height
         self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
-
+    def play(self):
+        import pygame
+        ##pygame.mixer.quit()
+##        self.movie = pygame.movie.Movie(self.filepath)
+##        self.movie.set_display(self.movieSurface)
+        self.movie.play()
 def prepareDetail(detailString): #parses detail string into elements
     global detailElements
     detailElements = []
@@ -172,7 +179,7 @@ def prepareDetail(detailString): #parses detail string into elements
                 workingChar = workingChar + 1
                 eleHeight = int(videoString[workingChar:])
                 detailElements.append(Video(filePath,eleWidth,eleHeight,
-                detailTextDiv.fontSize[1] + detailTextDiv.lineSpace))
+                detailTextDiv.fontSize[1] + detailTextDiv.lineSpace,len(detailElements))) #len(detailElements) passes line number
                 for k in range(0,detailElements[len(detailElements) - 1].characterHeight):
                     preElementString = preElementString + "@"
             elif mode == "normal":
@@ -221,13 +228,10 @@ speedDivision.textArray = ['speed: 1x']
 detailSurface = pygame.Surface((700,700))
 detailTextDiv = textDivision(25,0,700,750,detailedFont,detailedFontSize,True)
 detailElements = []
-detailSurface.set_colorkey(DEVPINK)
+detailSurface.set_colorkey((0,0,0))
 
 
 #DEBUG
 textDivisionArray.append(detailTextDiv)
 prepareDetail(open("testdetail.txt").read())
 print(detailElements)
-for element in detailElements:
-    if type(element) is Video:
-        element.movie.play()

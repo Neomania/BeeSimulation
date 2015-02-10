@@ -10,7 +10,9 @@
 #-------------------------------------------------------------------------------
 
 def main():
-    import pygame, sys, os, random, ui, math, globalcfg, fonts
+    import pygame
+    pygame.init()
+    import sys, os, random, ui, math, globalcfg, fonts
     import pygame.freetype
     from ui import buttonArray, textDivisionArray, baseUI, detailSurface, detailTextDiv,detailElements
     clock = pygame.time.Clock()
@@ -26,7 +28,7 @@ def main():
     displaySurface = pygame.display.set_mode(
     (globalcfg.windowWidth,globalcfg.windowHeight))
     scrollSpeed = 5
-    displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
+    displayingDetail = True #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 
     #PHYSICS
     simHeight = 750
@@ -81,6 +83,15 @@ def main():
                         if div.rect.collidepoint(mousePos) and div.scrollable and div.scrollAmount < 0:
                             div.scrollAmount = div.scrollAmount + scrollSpeed
                 elif event.button == 1: #LEFT MOUSE CLICK
+                    if detailTextDiv.rect.collidepoint(mousePos) and displayingDetail:
+                        for element in detailElements:
+                            if type(element) is ui.Video:
+                                if element.rect.collidepoint((mousePos[0],
+                                mousePos[1] - 25 - detailTextDiv.scrollAmount)):
+                                    if element.movie.get_busy():
+                                        element.movie.stop()
+                                    else:
+                                        element.play()
                     for button in buttonArray:
                         if button.rect.collidepoint(mousePos) and button.clickable:
                             button.proc()
@@ -114,7 +125,7 @@ def main():
         #DETAIL BITS
         if displayingDetail == True:
             #DRAW DETAIL BASE
-            detailSurface.fill(DEVPINK)
+            detailSurface.fill(BLACK)
             lineNumber = 0
             for element in detailElements:
                 if type(element) is str:
@@ -127,7 +138,7 @@ def main():
                          ,element,WHITE)
                     lineNumber = lineNumber + 1
                 elif type(element) is ui.Video:
-                    detailSurface.blit(element.movieSurface,(0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
+                    detailSurface.blit(element.movieSurface,(element.rect.left,25 + (lineNumber * (detailTextDiv.fontSize[1] +
                      detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
                 elif type(element) is ui.Image:
                     detailSurface.blit(element.imageSurface,(0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
