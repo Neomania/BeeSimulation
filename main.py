@@ -89,9 +89,14 @@ def main():
                                 if element.rect.collidepoint((mousePos[0],
                                 mousePos[1] - 25 - detailTextDiv.scrollAmount)):
                                     if element.movie.get_busy():
+                                        print("busy")
                                         element.movie.stop()
+                                        pygame.mixer.quit()
+                                        #element = ui.Video(element.filepath,element.width,element.height,element.fontHeightAndSpacing,element.lineNumber)
                                     else:
                                         element.play()
+                                        pygame.mixer.init()
+                                        #element.movie.play()
                     for button in buttonArray:
                         if button.rect.collidepoint(mousePos) and button.clickable:
                             button.proc()

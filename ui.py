@@ -106,9 +106,11 @@ class Video:
     import pygame
     def __init__(self,filepath,width,height,fontHeightAndSpacing,lineNumber):
         import pygame, math
-        pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
+        #pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
         self.rect = pygame.Rect(round((700-width)/2)
         ,lineNumber * fontHeightAndSpacing,width,height)
+        self.fontHeightAndSpacing = fontHeightAndSpacing
+        self.lineNumber = lineNumber
         self.filepath = filepath
         self.movie = pygame.movie.Movie(filepath)
         self.movieSurface = pygame.Surface((width,height))
@@ -118,9 +120,8 @@ class Video:
         self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
     def play(self):
         import pygame
-        ##pygame.mixer.quit()
-##        self.movie = pygame.movie.Movie(self.filepath)
-##        self.movie.set_display(self.movieSurface)
+        self.movie = pygame.movie.Movie(self.filepath)
+        self.movie.set_display(self.movieSurface)
         self.movie.play()
 def prepareDetail(detailString): #parses detail string into elements
     global detailElements
@@ -215,7 +216,7 @@ buttonArray.append(newFlowerButton)
 
 textDivisionArray = []
 
-infoBoxDivision = (textDivision(750,0,250,300,infoFont,infoFontSize,True)) #INFOBOX
+infoBoxDivision = (textDivision(760,0,240,300,infoFont,infoFontSize,True)) #INFOBOX
 textDivisionArray.append(infoBoxDivision)
 infoBoxDivision.textArray = divideStringIntoList(
 testString,infoBoxDivision.characterWidth)
