@@ -28,7 +28,7 @@ def main():
     displaySurface = pygame.display.set_mode(
     (globalcfg.windowWidth,globalcfg.windowHeight))
     scrollSpeed = 5
-    displayingDetail = True #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
+    globalcfg.displayingDetail = True #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 
     #PHYSICS
     simHeight = 750
@@ -55,7 +55,14 @@ def main():
     infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
     beeArray.append(Bee(home))
 
+    def flipBoolean():
+        globalcfg.displayingDetail = False
+    selectedItem = None
     detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
+    detailButtons = [ui.Button(725,0,25,25,'assets/ui/closeDetail.png',flipBoolean),
+                    ui.Button(700,0,25,25,'assets/ui/refreshDetail.png',ui.prepareDetail,open("testdetail.txt").read())]
+    for button in detailButtons:
+        button.clickable = globalcfg.displayingDetail
 
     while True: #MAIN GAME LOOP
         displaySurface.fill(BLACK)
@@ -63,7 +70,7 @@ def main():
         mousePos = pygame.mouse.get_pos()
 
         #PHYSICS, DECISION, ALL NON-UI ACTIONS
-        if displayingDetail == False:
+        if globalcfg.displayingDetail == False:
             for potato in range(0,globalcfg.speedMultiplier):
                 for bee in beeArray:
                     bee.updatePosition()
@@ -83,31 +90,26 @@ def main():
                         if div.rect.collidepoint(mousePos) and div.scrollable and div.scrollAmount < 0:
                             div.scrollAmount = div.scrollAmount + scrollSpeed
                 elif event.button == 1: #LEFT MOUSE CLICK
-                    if ui.detailTextDiv.rect.collidepoint(mousePos) and displayingDetail:
+                    if ui.detailTextDiv.rect.collidepoint(mousePos) and globalcfg.displayingDetail:
                         for element in ui.detailElements:
                             if type(element) is ui.Video:
                                 if element.rect.collidepoint((mousePos[0],
                                 mousePos[1] - 25 - ui.detailTextDiv.scrollAmount)):
                                     if element.movie.get_busy():
-                                        print("busy")
                                         element.movie.stop()
                                     else:
                                         for vid in ui.detailElements:
                                             if type(vid) is ui.Video:
-                                                if vid.movie.get_busy():
-                                                    element.movie.stop()
-                                        element.play() #wtf why does this fix the problem
-                                        element.play()
-                    for button in buttonArray:
+                                                vid.movie.stop()
+                                        element.play() #why does this fix the problem
+                                        element.play() #this is an affront to everything I stand for
+                    for button in buttonArray + detailButtons:
                         if button.rect.collidepoint(mousePos) and button.clickable:
                             button.proc()
                             ui.speedDivision.textArray = ui.divideStringIntoList(
                             str("speed: " + str(globalcfg.speedMultiplier) + 'x'
                             ),ui.speedDivision.characterWidth)
                             print(ui.speedDivision.textArray)
-                elif event.button == 3:
-                    ui.updateDetail()
-                    print("Supotato")
 
         #DRAW SIMULATION
         simSurface.fill(BLACK)
@@ -131,7 +133,7 @@ def main():
         #DRAW BASE UI
         displaySurface.blit(baseUI,(0,0))
         #DETAIL BITS
-        if displayingDetail == True:
+        if globalcfg.displayingDetail == True:
             #DRAW DETAIL BASE
             ui.detailSurface.fill(BLACK)
             lineNumber = 0
@@ -153,6 +155,20 @@ def main():
                      ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount))
             displaySurface.blit(ui.detailSurface,(25,0))
             displaySurface.blit(detailOverlay,(0,0))
+            for button in detailButtons:
+                if button.rect.collidepoint(mousePos):
+                    if pygame.mouse.get_pressed()[0]:
+                        displaySurface.blit(button.spriteSheet,
+                        button.rect,
+                        button.clickedRect)
+                    else:
+                        displaySurface.blit(button.spriteSheet,
+                        button.rect,
+                        button.mouseOverRect)
+                else:
+                    displaySurface.blit(button.spriteSheet,
+                    button.rect,
+                    button.neutralRect)
         #DRAW TEXT
         for div in ui.textDivisionArray:
             lineNumber = 0
