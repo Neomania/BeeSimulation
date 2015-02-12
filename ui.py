@@ -106,7 +106,7 @@ class Video:
     import pygame
     def __init__(self,filepath,width,height,fontHeightAndSpacing,lineNumber):
         import pygame, math
-        #pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
+        pygame.mixer.quit() #TEMPORARY: NEEDED FOR AUDIO TO WORK ON TEST
         self.rect = pygame.Rect(round((700-width)/2)
         ,lineNumber * fontHeightAndSpacing,width,height)
         self.fontHeightAndSpacing = fontHeightAndSpacing
@@ -120,6 +120,7 @@ class Video:
         self.characterHeight = math.ceil(self.height / fontHeightAndSpacing)
     def play(self):
         import pygame
+        #pygame.mixer.init()
         self.movie = pygame.movie.Movie(self.filepath)
         self.movie.set_display(self.movieSurface)
         self.movie.play()
@@ -226,7 +227,7 @@ textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
 
 #DETAILS
-detailSurface = pygame.Surface((700,700))
+detailSurface = pygame.Surface((700,750))
 detailTextDiv = textDivision(25,0,700,750,detailedFont,detailedFontSize,True)
 detailElements = []
 detailSurface.set_colorkey((0,0,0))
@@ -236,3 +237,9 @@ detailSurface.set_colorkey((0,0,0))
 textDivisionArray.append(detailTextDiv)
 prepareDetail(open("testdetail.txt").read())
 print(detailElements)
+
+def updateDetail():
+    import main
+    textDivisionArray.append(detailTextDiv)
+    prepareDetail(open("testdetail.txt").read())
+    print(detailElements)

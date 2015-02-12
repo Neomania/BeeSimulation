@@ -14,7 +14,7 @@ def main():
     pygame.init()
     import sys, os, random, ui, math, globalcfg, fonts
     import pygame.freetype
-    from ui import buttonArray, textDivisionArray, baseUI, detailSurface, detailTextDiv,detailElements
+    from ui import buttonArray, textDivisionArray, baseUI#, detailSurface, ui.detailTextDiv,ui.detailElements
     clock = pygame.time.Clock()
     FPS = 60
     DEVPINK = (255,0,255)
@@ -59,7 +59,7 @@ def main():
 
     while True: #MAIN GAME LOOP
         displaySurface.fill(BLACK)
-        detailSurface.fill(BLACK)
+        ui.detailSurface.fill(BLACK)
         mousePos = pygame.mouse.get_pos()
 
         #PHYSICS, DECISION, ALL NON-UI ACTIONS
@@ -83,28 +83,31 @@ def main():
                         if div.rect.collidepoint(mousePos) and div.scrollable and div.scrollAmount < 0:
                             div.scrollAmount = div.scrollAmount + scrollSpeed
                 elif event.button == 1: #LEFT MOUSE CLICK
-                    if detailTextDiv.rect.collidepoint(mousePos) and displayingDetail:
-                        for element in detailElements:
+                    if ui.detailTextDiv.rect.collidepoint(mousePos) and displayingDetail:
+                        for element in ui.detailElements:
                             if type(element) is ui.Video:
                                 if element.rect.collidepoint((mousePos[0],
-                                mousePos[1] - 25 - detailTextDiv.scrollAmount)):
+                                mousePos[1] - 25 - ui.detailTextDiv.scrollAmount)):
                                     if element.movie.get_busy():
                                         print("busy")
                                         element.movie.stop()
-                                        pygame.mixer.quit()
-                                        #element = ui.Video(element.filepath,element.width,element.height,element.fontHeightAndSpacing,element.lineNumber)
                                     else:
+                                        for vid in ui.detailElements:
+                                            if type(vid) is ui.Video:
+                                                if vid.movie.get_busy():
+                                                    element.movie.stop()
+                                        element.play() #wtf why does this fix the problem
                                         element.play()
-                                        pygame.mixer.init()
-                                        #element.movie.play()
                     for button in buttonArray:
                         if button.rect.collidepoint(mousePos) and button.clickable:
                             button.proc()
                             ui.speedDivision.textArray = ui.divideStringIntoList(
                             str("speed: " + str(globalcfg.speedMultiplier) + 'x'
-                            ),
-                            ui.speedDivision.characterWidth)
+                            ),ui.speedDivision.characterWidth)
                             print(ui.speedDivision.textArray)
+                elif event.button == 3:
+                    ui.updateDetail()
+                    print("Supotato")
 
         #DRAW SIMULATION
         simSurface.fill(BLACK)
@@ -130,25 +133,25 @@ def main():
         #DETAIL BITS
         if displayingDetail == True:
             #DRAW DETAIL BASE
-            detailSurface.fill(BLACK)
+            ui.detailSurface.fill(BLACK)
             lineNumber = 0
-            for element in detailElements:
+            for element in ui.detailElements:
                 if type(element) is str:
-                    if 25 + (lineNumber * (detailTextDiv.fontSize[1] +
-                    detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount >= 0:
+                    if 25 + (lineNumber * (ui.detailTextDiv.fontSize[1] +
+                    ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount >= 0:
                         fonts.detailedFont.render_to(
-                        detailSurface,
-                        (0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
-                         detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount)
+                        ui.detailSurface,
+                        (0,25 + (lineNumber * (ui.detailTextDiv.fontSize[1] +
+                         ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount)
                          ,element,WHITE)
                     lineNumber = lineNumber + 1
                 elif type(element) is ui.Video:
-                    detailSurface.blit(element.movieSurface,(element.rect.left,25 + (lineNumber * (detailTextDiv.fontSize[1] +
-                     detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
+                    ui.detailSurface.blit(element.movieSurface,(element.rect.left,25 + (lineNumber * (ui.detailTextDiv.fontSize[1] +
+                     ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount))
                 elif type(element) is ui.Image:
-                    detailSurface.blit(element.imageSurface,(0,25 + (lineNumber * (detailTextDiv.fontSize[1] +
-                     detailTextDiv.lineSpace)) + detailTextDiv.scrollAmount))
-            displaySurface.blit(detailSurface,(25,0))
+                    ui.detailSurface.blit(element.imageSurface,(0,25 + (lineNumber * (ui.detailTextDiv.fontSize[1] +
+                     ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount))
+            displaySurface.blit(ui.detailSurface,(25,0))
             displaySurface.blit(detailOverlay,(0,0))
         #DRAW TEXT
         for div in ui.textDivisionArray:
