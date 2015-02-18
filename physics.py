@@ -11,6 +11,7 @@
 
 class Bee:
     summaryText = open('assets/summary/bee.txt','r').read()
+    detailText = open('assets/detail/bee.txt','r').read()
     def __init__(self,hive):
         self.xPos = hive.xPos
         self.yPos = hive.yPos

@@ -214,6 +214,9 @@ buttonArray.append(increaseSpeedButton)
 newFlowerButton = (Button(875,375,125,125, #NEW FLOWER BUTTON
 'assets/ui/newFlower.png'))
 buttonArray.append(newFlowerButton)
+showDetailButton = (Button(975,275,25,25,
+'assets/ui/showDetail.png',showDetail))
+buttonArray.append(showDetailButton)
 
 textDivisionArray = []
 
@@ -230,16 +233,18 @@ speedDivision.textArray = ['speed: 1x']
 detailSurface = pygame.Surface((700,750))
 detailTextDiv = textDivision(25,0,700,750,detailedFont,detailedFontSize,True)
 detailElements = []
-detailSurface.set_colorkey((0,0,0))
+detailSurface.set_colorkey((1,1,1))
 
 
 #DEBUG
 textDivisionArray.append(detailTextDiv)
-prepareDetail(open("testdetail.txt").read())
+prepareDetail(open("assets/summary/bee.txt","r").read())
 print(detailElements)
 
-def updateDetail():
+def updateDetail(): #dammit past timothy comment on your code more
     import main
-    textDivisionArray.append(detailTextDiv)
-    prepareDetail(open("testdetail.txt").read())
-    print(detailElements)
+    if main.selectedItem == None:
+        main.detailButtons[1].clickable = False
+    else:
+        prepareDetail(main.selectedItem.detailString)
+    print(textDivisionArray)

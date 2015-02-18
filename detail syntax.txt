@@ -1,0 +1,3 @@
+Hello World! = "Hello World!"
+# = Image; syntax: #fileString,1600,900#
+^ = Video; syntax: ^fileString,1600,900^
