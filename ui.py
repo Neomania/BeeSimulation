@@ -248,3 +248,13 @@ detailButtons = [Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
 textDivisionArray.append(detailTextDiv)
 prepareDetail(open("assets/summary/bee.txt","r").read())
 print(detailElements)
+
+def updateSummary():
+    if globalcfg.selectedItem == None:
+        infoBoxDivision.textArray = divideStringIntoList("Select something!",
+        infoBoxDivision.characterWidth)
+        showDetailButton.clickable = False
+    else:
+        infoBoxDivision.textArray = divideStringIntoList(
+        globalcfg.selectedItem.summaryText,infoBoxDivision.characterWidth)
+        showDetailButton.clickable = True

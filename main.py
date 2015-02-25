@@ -25,6 +25,8 @@ def betweenVertices(selectionStart,selectionEnd,entity):
         return True
     else:
         return False
+def distanceBetweenVertices(vertex1,vertex2):
+    return (((vertex1[0] - vertex2[0])**2) + ((vertex1[1] - vertex2[1])**2))**0.5
 
 from pygame.locals import *
 from physics import *
@@ -57,6 +59,7 @@ simSurface = pygame.Surface((simWidth,simHeight))
 beeArray = []
 flowerArray = []
 danceFloorArray = []
+selectedBeeArray = []
 
 danceFloorArray.append(DanceFloor(40,0))
 danceFloorArray.append(DanceFloor(-40,0))
@@ -74,7 +77,6 @@ pygame.freetype.init()
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 beeArray.append(Bee(home))
-globalcfg.selectedItem = Bee(home)
 
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
@@ -82,6 +84,8 @@ detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
 ##                ui.Button(700,0,25,25,'assets/ui/refreshDetail.png',ui.updateDetail)]
 for button in ui.detailButtons:
     button.clickable = globalcfg.displayingDetail
+
+ui.updateSummary()
 
 while True: #MAIN GAME LOOP
     displaySurface.fill(BLACK)
@@ -122,10 +126,45 @@ while True: #MAIN GAME LOOP
                                     element.play() #why does this fix the problem
                                     element.play() #this is an affront to everything I stand for
 
-                elif mousePos[0] <= simWidth:
+                elif mousePos[0] <= simWidth and globalcfg.displayingDetail == False:
                     if selecting == False:
                         selecting = True
                         selectionStart = mousePos
+##                for button in (ui.buttonArray + ui.detailButtons):
+##                    if button.rect.collidepoint(mousePos) and button.clickable:
+##                        button.proc()
+##                        ui.speedDivision.textArray = ui.divideStringIntoList(
+##                        str("speed: " + str(globalcfg.speedMultiplier) + 'x'
+##                        ),ui.speedDivision.characterWidth)
+##                        print(ui.speedDivision.textArray)
+
+        elif event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                if globalcfg.displayingDetail == False:
+                    if selecting and distanceBetweenVertices(selectionStart,mousePos) > 10:
+                        selecting = False
+                        for bee in beeArray:
+                            if betweenVertices((selectionStart[0] - (simWidth / 2),
+                            selectionStart[1] - (simHeight / 2)),
+                            (mousePos[0] - (simWidth / 2),
+                            mousePos[1] - (simHeight / 2)),
+                            bee):
+                                bee.selected = True
+                                print("mwop")
+                        selectedBeeArray = []
+                        for bee in beeArray: #housekeeping
+                            if bee.selected:
+                                selectedBeeArray.append(bee)
+                        if selectedBeeArray != []:
+                            globalcfg.selectedItem = selectedBeeArray[0]
+                            ui.updateSummary()
+                    elif selectedBeeArray != [] and selecting:#click to deselect
+                        selecting = False
+                        globalcfg.selectedItem = None
+                        ui.updateSummary()
+                        for bee in selectedBeeArray:
+                            bee.selected = False
+                        selectedBeeArray = []
                 for button in (ui.buttonArray + ui.detailButtons):
                     if button.rect.collidepoint(mousePos) and button.clickable:
                         button.proc()
@@ -134,20 +173,6 @@ while True: #MAIN GAME LOOP
                         ),ui.speedDivision.characterWidth)
                         print(ui.speedDivision.textArray)
 
-        elif event.type == MOUSEBUTTONUP:
-            if event.button == 1:
-                if selecting:
-                    selecting = False
-                    for bee in beeArray:
-                        print("testing" + bee)
-                        if betweenVertices(selectionStart,mousePos,bee):
-                            bee.selected = True
-                            print("mwop")
-                    selectedBeeArray = []
-                    for bee in beeArray: #housekeeping
-                        if bee.selected:
-                            selectedBeeArray.append(bee)
-                    print(selectedBeeArray)
 
     #DRAW SIMULATION
     simSurface.fill(BLACK)

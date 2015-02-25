@@ -35,13 +35,6 @@ def closeDetail():
         if type(vid) is ui.Video:
             vid.movie.stop()
     print("dun")
-def updateSummary():
-    if globalcfg.selectedItem == None:
-        ui.infoBoxDivision.textArray = divideStringIntoList("Select something!",
-        ui.infoBoxDivision.characterWidth)
-    else:
-        ui.infoBoxDivision.textArray = divideStringIntoList(
-        globalcfg.selectedItem.summaryText,ui.infoBoxDivision.characterWidth)
 
 def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
     stringLength = len(stringToDivide) - 1

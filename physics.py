@@ -16,7 +16,7 @@ class Bee:
     def __init__(self,hive):
         self.xPos = hive.xPos
         self.yPos = hive.yPos
-        self.vel = 1
+        self.vel = 0
         self.direction = 0
         self.selected = False
     def houseKeep(self):
@@ -26,7 +26,6 @@ class Bee:
             self.direction = self.direction + 360
     def updatePosition(self):
         import math
-        self.direction = self.direction + 2
         self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
         self.yPos = self.yPos + (self.vel * math.sin(math.radians(self.direction)))
 class DanceFloor:
