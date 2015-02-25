@@ -8,13 +8,30 @@
 # Copyright:   (c) Timothy 2015
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
+def betweenVertices(selectionStart,selectionEnd,entity):
+    inX = False
+    inY = False
+    if entity.xPos > selectionStart[0]:
+        if entity.xPos < selectionEnd[0]:
+            inX = True
+    elif entity.xPos > selectionEnd[0]:
+        inX = True
+    if entity.yPos > selectionStart[1]:
+        if entity.yPos < selectionEnd[1]:
+            inY = True
+    elif entity.yPos > selectionEnd[1]:
+        inY = True
+    if inX and inY:
+        return True
+    else:
+        return False
+
 from pygame.locals import *
 from physics import *
 import pygame
 pygame.init()
 import sys, os, random, ui, math, globalcfg, fonts, physics
 import pygame.freetype
-#, detailSurface, ui.detailTextDiv,ui.detailElements
 clock = pygame.time.Clock()
 FPS = 60
 DEVPINK = (255,0,255)
@@ -30,7 +47,8 @@ displaySurface = pygame.display.set_mode(
 (globalcfg.windowWidth,globalcfg.windowHeight))
 scrollSpeed = 5
 globalcfg.displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
-selectedItem = None
+selectionStart = (0,0)
+selecting = False
 
 #PHYSICS
 simHeight = 750
@@ -56,20 +74,13 @@ pygame.freetype.init()
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 beeArray.append(Bee(home))
-selectedItem = Bee(home)
+globalcfg.selectedItem = Bee(home)
 
-def closeDetail():
-    import ui
-    globalcfg.displayingDetail = False
-    for vid in ui.detailElements:
-        if type(vid) is ui.Video:
-            vid.movie.stop()
-selectedItem = None
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
-detailButtons = [ui.Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
-                ui.Button(700,0,25,25,'assets/ui/refreshDetail.png',ui.updateDetail)]
-for button in detailButtons:
+##detailButtons = [ui.Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
+##                ui.Button(700,0,25,25,'assets/ui/refreshDetail.png',ui.updateDetail)]
+for button in ui.detailButtons:
     button.clickable = globalcfg.displayingDetail
 
 while True: #MAIN GAME LOOP
@@ -110,13 +121,33 @@ while True: #MAIN GAME LOOP
                                             vid.movie.stop()
                                     element.play() #why does this fix the problem
                                     element.play() #this is an affront to everything I stand for
-                for button in ui.buttonArray + detailButtons:
+
+                elif mousePos[0] <= simWidth:
+                    if selecting == False:
+                        selecting = True
+                        selectionStart = mousePos
+                for button in (ui.buttonArray + ui.detailButtons):
                     if button.rect.collidepoint(mousePos) and button.clickable:
                         button.proc()
                         ui.speedDivision.textArray = ui.divideStringIntoList(
                         str("speed: " + str(globalcfg.speedMultiplier) + 'x'
                         ),ui.speedDivision.characterWidth)
                         print(ui.speedDivision.textArray)
+
+        elif event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                if selecting:
+                    selecting = False
+                    for bee in beeArray:
+                        print("testing" + bee)
+                        if betweenVertices(selectionStart,mousePos,bee):
+                            bee.selected = True
+                            print("mwop")
+                    selectedBeeArray = []
+                    for bee in beeArray: #housekeeping
+                        if bee.selected:
+                            selectedBeeArray.append(bee)
+                    print(selectedBeeArray)
 
     #DRAW SIMULATION
     simSurface.fill(BLACK)
@@ -135,6 +166,14 @@ while True: #MAIN GAME LOOP
         pygame.draw.circle(simSurface,(255,255,0),
         (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))
         ),2)
+        if bee.selected:
+            pygame.draw.circle(simSurface,RED,
+            (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
+            5,1)
+    if selecting == True:
+        selectionSize = (mousePos[0] - selectionStart[0],mousePos[1] - selectionStart[1])
+        selectionRect = pygame.Rect(selectionStart,selectionSize)
+        pygame.draw.rect(simSurface,RED,selectionRect,2)
     #APPLY SIMSURFACE TO DISPLAY SURFACE
     displaySurface.blit(simSurface,(0,0))
     #DRAW BASE UI
@@ -162,7 +201,7 @@ while True: #MAIN GAME LOOP
                  ui.detailTextDiv.lineSpace)) + ui.detailTextDiv.scrollAmount))
         displaySurface.blit(ui.detailSurface,(25,0))
         displaySurface.blit(detailOverlay,(0,0))
-        for button in detailButtons:
+        for button in ui.detailButtons:
             if button.rect.collidepoint(mousePos):
                 if pygame.mouse.get_pressed()[0]:
                     displaySurface.blit(button.spriteSheet,

@@ -201,6 +201,12 @@ def prepareDetail(detailString): #parses detail string into elements
         detailElements = detailElements + divideStringIntoList(
         preElementString,700)
 
+def updateDetail(): #dammit past timothy comment on your code more
+    if globalcfg.selectedItem == None:
+        pass
+    else:
+        prepareDetail(globalcfg.selectedItem.detailString)
+    print(textDivisionArray)
 
 baseUI = pygame.image.load('assets/ui/baseui.png')
 
@@ -234,17 +240,11 @@ detailSurface = pygame.Surface((700,750))
 detailTextDiv = textDivision(25,0,700,750,detailedFont,detailedFontSize,True)
 detailElements = []
 detailSurface.set_colorkey((1,1,1))
+detailButtons = [Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
+                Button(700,0,25,25,'assets/ui/refreshDetail.png',updateDetail)]
 
 
 #DEBUG
 textDivisionArray.append(detailTextDiv)
 prepareDetail(open("assets/summary/bee.txt","r").read())
 print(detailElements)
-
-def updateDetail(): #dammit past timothy comment on your code more
-    import main
-    if main.selectedItem == None:
-        main.detailButtons[1].clickable = False
-    else:
-        prepareDetail(main.selectedItem.detailString)
-    print(textDivisionArray)

@@ -11,12 +11,14 @@
 
 class Bee:
     summaryText = open('assets/summary/bee.txt','r').read()
-    detailText = open('assets/detail/bee.txt','r').read()
+    detailString = open('assets/detail/bee.txt','r').read()
+    selected = False
     def __init__(self,hive):
         self.xPos = hive.xPos
         self.yPos = hive.yPos
         self.vel = 1
         self.direction = 0
+        self.selected = False
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -28,6 +30,8 @@ class Bee:
         self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
         self.yPos = self.yPos + (self.vel * math.sin(math.radians(self.direction)))
 class DanceFloor:
+    summaryText = open('assets/summary/dancefloor.txt','r').read()
+    detailString = open('assets/detail/dancefloor.txt','r').read()
     radius = 20
     def __init__(self,xPos,yPos):
         self.xPos = xPos
@@ -35,6 +39,8 @@ class DanceFloor:
         self.occupied = False
 
 class Hive:
+    summaryText = open('assets/summary/hive.txt','r').read()
+    detailString = open('assets/detail/hive.txt','r').read()
     radius = 20
     def __init__(self,xPos,yPos):
         self.xPos = xPos
