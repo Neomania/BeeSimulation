@@ -130,13 +130,6 @@ while True: #MAIN GAME LOOP
                     if selecting == False:
                         selecting = True
                         selectionStart = mousePos
-##                for button in (ui.buttonArray + ui.detailButtons):
-##                    if button.rect.collidepoint(mousePos) and button.clickable:
-##                        button.proc()
-##                        ui.speedDivision.textArray = ui.divideStringIntoList(
-##                        str("speed: " + str(globalcfg.speedMultiplier) + 'x'
-##                        ),ui.speedDivision.characterWidth)
-##                        print(ui.speedDivision.textArray)
 
         elif event.type == MOUSEBUTTONUP:
             if event.button == 1:
