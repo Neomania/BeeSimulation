@@ -16,12 +16,14 @@ class Bee:
     detailString = open('assets/detail/bee.txt','r').read()
     selected = False
     state = "Idle"
+    destination = None
     def __init__(self,hive):
         self.xPos = hive.xPos
         self.yPos = hive.yPos
-        self.vel = 0
+        self.vel = 1
         self.direction = 0
         self.selected = False
+        self.destination = None
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -36,6 +38,7 @@ class Bee:
                 self.decideNextState()
             else:
                 self.direction = math.degrees(math.atan2((target[1] - self.yPos) , (target[0] - self.xPos)))
+                self.updatePosition()
         else:
             if distanceBetweenVertices((self.xPos,self.yPos),(target.xPos,target.yPos)) <= self.vel:
                 self.xPos = target.xPos
@@ -44,6 +47,7 @@ class Bee:
             else:
                 self.direction = math.degrees(math.atan2((target.yPos - self.yPos),
                 (target.xPos - self.xPos)))
+                self.updatePosition()
     def updatePosition(self):
         import math
         self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
@@ -51,6 +55,10 @@ class Bee:
     def decideNextState(self):#Catch all event for end of state
         if self.state == "Moving to dance floor":
             self.target.beesOnFloor.append(self)
+            self.state = "Attending dance"
+    def attendDance(self,danceFloor):
+        import random
+
 class DanceFloor:
     summaryText = open('assets/summary/dancefloor.txt','r').read()
     detailString = open('assets/detail/dancefloor.txt','r').read()

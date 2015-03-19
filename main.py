@@ -95,7 +95,8 @@ while True: #MAIN GAME LOOP
     if globalcfg.displayingDetail == False:
         for potato in range(0,globalcfg.speedMultiplier):
             for bee in beeArray:
-                bee.updatePosition()
+                if bee.state == "Moving to dance floor":
+                    bee.moveDirectlyTowards(bee.target)
 
     #USER INPUT HANDLING
     for event in pygame.event.get():
