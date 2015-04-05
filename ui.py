@@ -43,7 +43,14 @@ def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
         else:
             returnList.append(stringToDivide[endOfLastLinePointer:])
     return returnList
-
+class ExpandingCircle:
+    def __init__(self,colour,xPos,yPos,timeToLive=20,lineWidth=1):
+        self.colour = colour
+        self.timeToLive = timeToLive
+        self.timeLived = 3
+        self.xPos = xPos
+        self.yPos = yPos
+        self.lineWidth = 1
 class Button:
     import pygame
     rect = pygame.Rect
@@ -207,6 +214,8 @@ def updateDetail(): #dammit past timothy comment on your code more
     else:
         prepareDetail(globalcfg.selectedItem.detailString)
     print(textDivisionArray)
+
+expandingCircleArray = []
 
 baseUI = pygame.image.load('assets/ui/baseui.png')
 

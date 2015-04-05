@@ -15,7 +15,7 @@ class Bee:
     summaryText = open('assets/summary/bee.txt','r').read()
     detailString = open('assets/detail/bee.txt','r').read()
     selected = False
-    state = "Idle"
+    state = "Foraging randomly"
     destination = None
     def __init__(self,hive):
         self.xPos = hive.xPos
@@ -24,6 +24,12 @@ class Bee:
         self.direction = 0
         self.selected = False
         self.destination = None
+        self.hive = hive
+        self.roundDanced = False
+        self.stateTime = 600
+        self.subStateTime = 0
+        self.memoryStore = []
+        self.distanceTravelled = 0
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -53,11 +59,61 @@ class Bee:
         self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
         self.yPos = self.yPos + (self.vel * math.sin(math.radians(self.direction)))
     def decideNextState(self):#Catch all event for end of state
+        import random
         if self.state == "Moving to dance floor":
             self.target.beesOnFloor.append(self)
             self.state = "Attending dance"
+        elif self.state == "Attending dance":
+            self.target = (self.hive.xPos,self.hive.yPos)
+            self.state = "Returning to hive"
+        elif self.state == "Returning to hive":
+            self.state = "Idle"
+            self.stateTime = random.randint(60,240)
+        elif self.state == "Idle": #probably the most complex
+            if self.roundDanced: #if a round dance has been watched
+                decision = random.random()
+                if decision < 0.1:
+                    self.state = "Idle"
+                    self.stateTime = random.randint(60,240)
+                elif decision < 0.7:
+                    self.state = "Searching local area"
+                elif decision < 0.8:
+                    if self.memoryStore != []:
+                        self.state = "Moving to known food source"
+                        self.target = self.memoryStore[0]
+                else: #Randomly wander
+                    self.stateTime = random.randint(600,900)
+                    self.state = "Foraging randomly"
+                    self.direction = random.randrange(0,360)
+            else:
+                decision = random.random()
+                if decision < 0.1:
+                    self.state = "Idle"
+                    self.stateTime = random.randint(60,240)
+                elif decision < 0.8 and self.memoryStore != []:
+                    self.state = "Moving to known food source"
+                    self.target = self.memoryStore[0]
+                else:
+                    self.stateTime = random.randint(600,900)
+                    self.state = "Foraging randomly"
+                    self.direction = random.randrange(0,360)
+    def moveTowardsMemory(self):#moves towards memory using distance and dir
+        if self.distanceTravelled > self.target.distance:
+            self.state = "Foraging randomly"
+            self.distanceTravelled = 0
+        else:
+            self.direction = self.target.direction + random.randint(-3,3)
+            self.updatePosition()
+            self.distanceTravelled = self.distanceTravelled + self.vel
+
     def attendDance(self,danceFloor):
         import random
+class Memory:
+    direction = 0.0
+    distance = 0.0
+    def __init__(self,direction,distance):
+        self.direction = direction
+        self.distance = distance
 
 class DanceFloor:
     summaryText = open('assets/summary/dancefloor.txt','r').read()

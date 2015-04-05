@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+# Name:        main
+# Purpose:     brings the other bee modules together
 #
 # Author:      Timothy
 #
@@ -34,6 +34,7 @@ import pygame
 pygame.init()
 import sys, os, random, ui, math, globalcfg, fonts, physics
 import pygame.freetype
+import sharedfunctions
 clock = pygame.time.Clock()
 FPS = 60
 DEVPINK = (255,0,255)
@@ -77,6 +78,11 @@ pygame.freetype.init()
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 beeArray.append(Bee(home))
+beeArray.append(Bee(home))
+beeArray.append(Bee(home))
+beeArray.append(Bee(home))
+beeArray.append(Bee(home))
+beeArray.append(Bee(home))
 
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
@@ -97,6 +103,28 @@ while True: #MAIN GAME LOOP
             for bee in beeArray:
                 if bee.state == "Moving to dance floor":
                     bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Returning to hive":
+                    bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Idle":
+                    bee.stateTime = bee.stateTime - 1
+                    if bee.stateTime <= 0:
+                        bee.decideNextState()
+                elif bee.state == "Foraging randomly":
+                    if bee.subStateTime <= 0:
+                        bee.directionIncrement = random.randrange(-3,3)
+                        bee.subStateTime = random.randint(0,60)
+                    bee.subStateTime = bee.subStateTime - 1
+                    bee.stateTime = bee.stateTime - 1
+                    bee.direction = bee.direction + bee.directionIncrement
+                    bee.updatePosition()
+                    if bee.stateTime <= 0:
+                        bee.state = "Returning to hive"
+                        bee.target = sharedfunctions.pointAround(bee.hive,
+                        random.randint(0,hive.radius))
+
+
+
+
 
     #USER INPUT HANDLING
     for event in pygame.event.get():
@@ -144,7 +172,6 @@ while True: #MAIN GAME LOOP
                             mousePos[1] - (simHeight / 2)),
                             bee):
                                 bee.selected = True
-                                print("mwop")
                         selectedBeeArray = []
                         for bee in beeArray: #housekeeping
                             if bee.selected:
@@ -152,7 +179,7 @@ while True: #MAIN GAME LOOP
                         if selectedBeeArray != []:
                             globalcfg.selectedItem = selectedBeeArray[0]
                             ui.updateSummary()
-                    elif selectedBeeArray != [] and selecting:#click to deselect
+                    elif selecting:#click to deselect
                         selecting = False
                         globalcfg.selectedItem = None
                         ui.updateSummary()
@@ -177,7 +204,7 @@ while True: #MAIN GAME LOOP
         round(hive.yPos + (simHeight/2))),hive.radius)
     for danceFloor in danceFloorArray:
         #DRAW DANCE FLOORS
-        pygame.draw.circle(simSurface,(200,200,0),
+        pygame.draw.circle(simSurface,(150,150,0),
         (round(danceFloor.xPos + (simWidth/2)),
         round(danceFloor.yPos + (simHeight/2))),danceFloor.radius)
         #DRAW BEES
@@ -186,13 +213,27 @@ while True: #MAIN GAME LOOP
         (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))
         ),2)
         if bee.selected:
-            pygame.draw.circle(simSurface,RED,
-            (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
-            5,1)
+            if bee == globalcfg.selectedItem:
+                pygame.draw.circle(simSurface,RED,
+                (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
+                10,2)
+            else:
+                pygame.draw.circle(simSurface,RED,
+                (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
+                5,1)
     if selecting == True:
         selectionSize = (mousePos[0] - selectionStart[0],mousePos[1] - selectionStart[1])
         selectionRect = pygame.Rect(selectionStart,selectionSize)
         pygame.draw.rect(simSurface,RED,selectionRect,2)
+    for fx in ui.expandingCircleArray:
+        if fx.timeLived >= fx.timeToLive:
+            ui.expandingCircleArray.remove(fx)
+        else:
+            pygame.draw.circle(simSurface,fx.colour,
+            (round(fx.xPos + (simWidth/2)),round(fx.yPos + (simHeight/2))),
+            fx.timeLived, fx.lineWidth)
+            fx.timeLived = fx.timeLived + 1
+
     #APPLY SIMSURFACE TO DISPLAY SURFACE
     displaySurface.blit(simSurface,(0,0))
     #DRAW BASE UI
