@@ -55,7 +55,9 @@ selecting = False
 
 #PHYSICS
 simHeight = 750
+halfSimHeight = simHeight / 2
 simWidth = 750
+halfSimWidth = simWidth / 2
 simSurface = pygame.Surface((simWidth,simHeight))
 beeArray = []
 flowerArray = []
@@ -95,8 +97,9 @@ ui.updateSummary()
 
 while True: #MAIN GAME LOOP
     displaySurface.fill(BLACK)
-    mousePos = pygame.mouse.get_pos()
-
+    mousePos = pygame.mouse.get_pos() #mousePosWorld gives world coords
+    #ie. not screen coordinates
+    mousePosWorld = (mousePos[0] - halfSimWidth, mousePos[1] - halfSimHeight)
     #PHYSICS, DECISION, ALL NON-UI ACTIONS
     if globalcfg.displayingDetail == False:
         for potato in range(0,globalcfg.speedMultiplier):
@@ -158,18 +161,15 @@ while True: #MAIN GAME LOOP
                 elif mousePos[0] <= simWidth and globalcfg.displayingDetail == False:
                     if selecting == False:
                         selecting = True
-                        selectionStart = mousePos
+                        selectionStart = mousePosWorld
 
         elif event.type == MOUSEBUTTONUP:
             if event.button == 1:
                 if globalcfg.displayingDetail == False:
-                    if selecting and distanceBetweenVertices(selectionStart,mousePos) > 10:
+                    if selecting and distanceBetweenVertices(selectionStart,mousePosWorld) > 10:
                         selecting = False
                         for bee in beeArray:
-                            if betweenVertices((selectionStart[0] - (simWidth / 2),
-                            selectionStart[1] - (simHeight / 2)),
-                            (mousePos[0] - (simWidth / 2),
-                            mousePos[1] - (simHeight / 2)),
+                            if betweenVertices(selectionStart,mousePosWorld,
                             bee):
                                 bee.selected = True
                         globalcfg.selectedBeeArray = []
@@ -186,6 +186,14 @@ while True: #MAIN GAME LOOP
                         for bee in globalcfg.selectedBeeArray:
                             bee.selected = False
                         globalcfg.selectedBeeArray = []
+                        #Also: try selecting other entity, eg. dance floor
+                        for entity in (hiveArray
+                         + flowerArray
+                         + danceFloorArray):#all non-bee, non-ui arrays here
+                            if distanceBetweenVertices(mousePosWorld,
+                            (entity.xPos,entity.yPos)) < entity.radius:
+                                globalcfg.selectedItem = entity
+                        ui.updateSummary()
                 for button in (ui.buttonArray + ui.detailButtons):
                     if button.rect.collidepoint(mousePos) and button.clickable:
                         button.proc()
@@ -195,7 +203,11 @@ while True: #MAIN GAME LOOP
                         print(ui.speedDivision.textArray)
 
     if globalcfg.selectedBeeArray == []:
-        pass
+        ui.selectNextButton.clickable = False
+        ui.selectPrevButton.clickable = False
+    else:
+        ui.selectNextButton.clickable = True
+        ui.selectPrevButton.clickable = True
     #DRAW SIMULATION
     simSurface.fill(BLACK)
     for hive in hiveArray:
@@ -223,8 +235,9 @@ while True: #MAIN GAME LOOP
                 (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
                 5,1)
     if selecting == True:
-        selectionSize = (mousePos[0] - selectionStart[0],mousePos[1] - selectionStart[1])
-        selectionRect = pygame.Rect(selectionStart,selectionSize)
+        selectionSize = (mousePosWorld[0] - selectionStart[0],mousePosWorld[1] - selectionStart[1])
+        selectionRect = pygame.Rect((selectionStart[0] + halfSimWidth,
+        selectionStart[1] + halfSimHeight),selectionSize)
         pygame.draw.rect(simSurface,RED,selectionRect,2)
     for fx in ui.expandingCircleArray:
         if fx.timeLived >= fx.timeToLive:
