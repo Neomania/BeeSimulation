@@ -232,6 +232,12 @@ buttonArray.append(newFlowerButton)
 showDetailButton = (Button(975,275,25,25,
 'assets/ui/showDetail.png',showDetail))
 buttonArray.append(showDetailButton)
+selectNextButton = (Button(950,275,25,25,
+'assets/ui/showDetail.png',selectNext))
+buttonArray.append(selectNextButton)
+selectPrevButton = (Button(750,275,25,25,
+'assets/ui/showDetail.png',selectPrev))
+buttonArray.append(selectPrevButton)
 
 textDivisionArray = []
 

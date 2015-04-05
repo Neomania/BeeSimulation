@@ -35,6 +35,19 @@ def closeDetail():
         if type(vid) is ui.Video:
             vid.movie.stop()
     print("dun")
+def selectNext():
+    if globalcfg.selectedBeeArray != []:
+        print(type(globalcfg.selectedItem))
+        globalcfg.selectedBeeArray.remove(globalcfg.selectedItem)
+        globalcfg.selectedBeeArray = globalcfg.selectedBeeArray + [globalcfg.selectedItem] #sticks the selected item to the end of the array
+        globalcfg.selectedItem = globalcfg.selectedBeeArray[0] #makes the current first item in the array selected
+def selectPrev():
+    if globalcfg.selectedBeeArray != []:
+        globalcfg.selectedItem = globalcfg.selectedBeeArray[len(
+        globalcfg.selectedBeeArray) - 1] #makes the last item in the array the new selected item
+        globalcfg.selectedBeeArray.remove(globalcfg.selectedItem) #removes the last item
+        globalcfg.selectedBeeArray = [globalcfg.selectedItem] + globalcfg.selectedBeeArray
+        #sticks the removed item to the start of the array
 
 def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
     stringLength = len(stringToDivide) - 1

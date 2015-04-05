@@ -60,7 +60,7 @@ simSurface = pygame.Surface((simWidth,simHeight))
 beeArray = []
 flowerArray = []
 danceFloorArray = []
-selectedBeeArray = []
+globalcfg.selectedBeeArray = []
 
 danceFloorArray.append(DanceFloor(40,0))
 danceFloorArray.append(DanceFloor(-40,0))
@@ -172,20 +172,20 @@ while True: #MAIN GAME LOOP
                             mousePos[1] - (simHeight / 2)),
                             bee):
                                 bee.selected = True
-                        selectedBeeArray = []
+                        globalcfg.selectedBeeArray = []
                         for bee in beeArray: #housekeeping
                             if bee.selected:
-                                selectedBeeArray.append(bee)
-                        if selectedBeeArray != []:
-                            globalcfg.selectedItem = selectedBeeArray[0]
+                                globalcfg.selectedBeeArray.append(bee)
+                        if globalcfg.selectedBeeArray != []:
+                            globalcfg.selectedItem = globalcfg.selectedBeeArray[0]
                             ui.updateSummary()
                     elif selecting:#click to deselect
                         selecting = False
                         globalcfg.selectedItem = None
                         ui.updateSummary()
-                        for bee in selectedBeeArray:
+                        for bee in globalcfg.selectedBeeArray:
                             bee.selected = False
-                        selectedBeeArray = []
+                        globalcfg.selectedBeeArray = []
                 for button in (ui.buttonArray + ui.detailButtons):
                     if button.rect.collidepoint(mousePos) and button.clickable:
                         button.proc()
@@ -194,7 +194,8 @@ while True: #MAIN GAME LOOP
                         ),ui.speedDivision.characterWidth)
                         print(ui.speedDivision.textArray)
 
-
+    if globalcfg.selectedBeeArray == []:
+        pass
     #DRAW SIMULATION
     simSurface.fill(BLACK)
     for hive in hiveArray:

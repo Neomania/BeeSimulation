@@ -3,3 +3,4 @@ windowWidth = 1000
 windowHeight = 750
 displayingDetail = False
 selectedItem = None
+selectedBeeArray = []
