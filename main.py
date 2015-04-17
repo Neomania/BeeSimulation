@@ -86,6 +86,12 @@ beeArray.append(Bee(home))
 beeArray.append(Bee(home))
 beeArray.append(Bee(home))
 
+flowerArray.append(Flower(305,300,GREEN,0.5))
+flowerArray.append(Flower(305,305,GREEN,0.5))
+flowerArray.append(Flower(300,300,GREEN,0.5))
+flowerArray.append(Flower(310,310,GREEN,0.5))
+flowerArray.append(Flower(300,310,GREEN,0.5))
+
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
 ##detailButtons = [ui.Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
@@ -120,14 +126,39 @@ while True: #MAIN GAME LOOP
                     bee.stateTime = bee.stateTime - 1
                     bee.direction = bee.direction + bee.directionIncrement
                     bee.updatePosition()
+                    #check for nearby unoccupied flower
+                    nearestToBee = 9999999999.9
+                    nearestFlower = None
+                    for flower in flowerArray:
+                        if flower.occupied == False and (flower not in bee.visitedFlowers):
+                            distanceToBee = distanceBetweenVertices(
+                            (flower.xPos,flower.yPos),(bee.xPos,bee.yPos))
+                            if distanceToBee < nearestToBee and distanceToBee < 50:
+                                print("BOP")
+                                nearestToBee = distanceToBee
+                                nearestFlower = flower
+                    if nearestFlower != None:
+                        nearestFlower.acceptBee(bee)
+                        bee.state = "Moving to flower"
+                        bee.target = nearestFlower
+                        print("BEP")
                     if bee.stateTime <= 0:
                         bee.state = "Returning to hive"
                         bee.target = sharedfunctions.pointAround(bee.hive,
                         random.randint(0,hive.radius))
-
-
-
-
+                elif bee.state == "Moving to flower":
+                    bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Harvesting pollen":
+                    bee.stateTime = bee.stateTime - 1
+                    if bee.stateTime <= 0: #done
+                        bee.visitedFlowers.append(bee.target)
+                        bee.createMemoryAbout(bee.target)
+                        bee.state = "Returning to hive"
+                        bee.target.doneWithBee()
+                        bee.target = sharedfunctions.pointAround(bee.hive,
+                        random.randint(0,hive.radius))
+                elif bee.state == "Moving to known food source":
+                    bee.moveTowardsMemory()
 
     #USER INPUT HANDLING
     for event in pygame.event.get():
@@ -220,6 +251,11 @@ while True: #MAIN GAME LOOP
         pygame.draw.circle(simSurface,(150,150,0),
         (round(danceFloor.xPos + (simWidth/2)),
         round(danceFloor.yPos + (simHeight/2))),danceFloor.radius)
+    for flower in flowerArray:
+        #DRAW FLOWERS
+        pygame.draw.circle(simSurface,flower.colour,
+        (round(flower.xPos + halfSimWidth),
+        round(flower.yPos + halfSimHeight)),flower.radius)
         #DRAW BEES
     for bee in beeArray:
         pygame.draw.circle(simSurface,(255,255,0),
@@ -230,6 +266,7 @@ while True: #MAIN GAME LOOP
                 pygame.draw.circle(simSurface,RED,
                 (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
                 10,2)
+                print(bee.state)
             else:
                 pygame.draw.circle(simSurface,RED,
                 (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),

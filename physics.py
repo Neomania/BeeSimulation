@@ -15,7 +15,7 @@ class Bee:
     summaryText = open('assets/summary/bee.txt','r').read()
     detailString = open('assets/detail/bee.txt','r').read()
     selected = False
-    state = "Foraging randomly"
+    state = "Idle"
     destination = None
     def __init__(self,hive):
         self.xPos = hive.xPos
@@ -26,10 +26,11 @@ class Bee:
         self.destination = None
         self.hive = hive
         self.roundDanced = False
-        self.stateTime = 600
+        self.stateTime = 0
         self.subStateTime = 0
         self.memoryStore = []
         self.distanceTravelled = 0
+        self.visitedFlowers = []
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -69,6 +70,7 @@ class Bee:
         elif self.state == "Returning to hive":
             self.state = "Idle"
             self.stateTime = random.randint(60,240)
+            self.visitedFlowers = []
         elif self.state == "Idle": #probably the most complex
             if self.roundDanced: #if a round dance has been watched
                 decision = random.random()
@@ -77,10 +79,10 @@ class Bee:
                     self.stateTime = random.randint(60,240)
                 elif decision < 0.7:
                     self.state = "Searching local area"
-                elif decision < 0.8:
-                    if self.memoryStore != []:
-                        self.state = "Moving to known food source"
-                        self.target = self.memoryStore[0]
+                elif decision < 0.8 and self.memoryStore != []:
+                    self.state = "Moving to known food source"
+                    self.target = self.memoryStore[0]
+                    self.distanceTravelled = 0
                 else: #Randomly wander
                     self.stateTime = random.randint(600,900)
                     self.state = "Foraging randomly"
@@ -92,28 +94,48 @@ class Bee:
                     self.stateTime = random.randint(60,240)
                 elif decision < 0.8 and self.memoryStore != []:
                     self.state = "Moving to known food source"
+                    print("pathing")
                     self.target = self.memoryStore[0]
                 else:
                     self.stateTime = random.randint(600,900)
                     self.state = "Foraging randomly"
                     self.direction = random.randrange(0,360)
+        elif self.state == "Moving to flower":#docking request accepted
+            self.state = "Harvesting pollen"
+            self.stateTime = round(200 / self.target.pollenRate)
     def moveTowardsMemory(self):#moves towards memory using distance and dir
+        import random
         if self.distanceTravelled > self.target.distance:
             self.state = "Foraging randomly"
             self.distanceTravelled = 0
+            self.stateTime = random.randint(600,900)
         else:
             self.direction = self.target.direction + random.randint(-3,3)
             self.updatePosition()
             self.distanceTravelled = self.distanceTravelled + self.vel
-
+    def createMemoryAbout(self,flower):
+        import math, sharedfunctions
+        memoryExists = False
+        for memory in self.memoryStore:
+            if memory.flower == flower:
+                memoryExists = True
+        if memoryExists == False:
+            #find direction from hive
+            flowerVector = math.degrees(math.atan2((flower.yPos - self.hive.yPos)
+            ,(flower.xPos - self.hive.xPos)))
+            flowerDistance = sharedfunctions.distanceBetweenVertices(
+            (flower.xPos,flower.yPos),(self.hive.xPos,self.hive.yPos))
+            self.memoryStore.append(Memory(flowerVector,flowerDistance,flower))
     def attendDance(self,danceFloor):
         import random
 class Memory:
     direction = 0.0
     distance = 0.0
-    def __init__(self,direction,distance):
+    flower = None
+    def __init__(self,direction,distance,flower):
         self.direction = direction
         self.distance = distance
+        self.flower = flower
 
 class DanceFloor:
     summaryText = open('assets/summary/dancefloor.txt','r').read()
@@ -134,3 +156,22 @@ class Hive:
         self.xPos = xPos
         self.yPos = yPos
         self.pollenStore = 0
+
+class Flower:
+    summaryText = open('assets/summary/flower.txt','r').read()
+    detailString = open('assets/detail/flower.txt','r').read()
+    radius = 10
+    occupied = False
+    occupant = None
+    def __init__(self,xPos,yPos,colour,pollenRate):
+        self.xPos = xPos
+        self.yPos = yPos
+        self.colour = colour
+        self.pollenRate = pollenRate
+        self.occupied = False
+    def acceptBee(self,bee):
+        self.occupant = bee
+        self.occupied = True
+    def doneWithBee(self):
+        self.occupant = None
+        self.occupied = False
