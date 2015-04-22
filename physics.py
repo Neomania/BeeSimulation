@@ -8,6 +8,7 @@
 # Copyright:   (c) Timothy 2015
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
+import sharedfunctions
 def distanceBetweenVertices(vertex1,vertex2):
     return (((vertex1[0] - vertex2[0])**2) + ((vertex1[1] - vertex2[1])**2))**0.5
 
@@ -31,6 +32,7 @@ class Bee:
         self.memoryStore = []
         self.distanceTravelled = 0
         self.visitedFlowers = []
+        self.hive.beeArray.append(self)
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -65,12 +67,22 @@ class Bee:
             self.target.beesOnFloor.append(self)
             self.state = "Attending dance"
         elif self.state == "Attending dance":
-            self.target = (self.hive.xPos,self.hive.yPos)
+            self.target = sharedfunctions.pointAround(self.hive,
+            random.randint(0,self.hive.radius))
             self.state = "Returning to hive"
         elif self.state == "Returning to hive":
             self.state = "Idle"
             self.stateTime = random.randint(60,240)
             self.visitedFlowers = []
+        elif self.state == "Preparing to dance": #create dance, recruit bees
+            if self.memoryStore[0].distance < 200: #round dance
+                self.state = "Performing round dance"
+                self.directionIncrement = 6
+                self.yPos = self.yPos - 2
+                self.direction = 0
+            else:
+                self.state = "Performing waggle dance"
+
         elif self.state == "Idle": #probably the most complex
             if self.roundDanced: #if a round dance has been watched
                 decision = random.random()
@@ -79,10 +91,19 @@ class Bee:
                     self.stateTime = random.randint(60,240)
                 elif decision < 0.7:
                     self.state = "Searching local area"
+                    self.stateTime = random.randint(600,900)
+                    self.subStateTime = 0
                 elif decision < 0.8 and self.memoryStore != []:
                     self.state = "Moving to known food source"
                     self.target = self.memoryStore[0]
                     self.distanceTravelled = 0
+                elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
+                    #do your dance at the space jam
+                    for danceFloor in self.hive.danceFloors:
+                        if danceFloor.occupied == False:
+                            self.target = danceFloor
+                    self.target.occupied = True
+                    self.state = "Preparing to dance"
                 else: #Randomly wander
                     self.stateTime = random.randint(600,900)
                     self.state = "Foraging randomly"
@@ -96,6 +117,14 @@ class Bee:
                     self.state = "Moving to known food source"
                     print("pathing")
                     self.target = self.memoryStore[0]
+                    self.distanceTravelled = 0
+                elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
+                    #do your dance at the space jam
+                    for danceFloor in self.hive.danceFloors:
+                        if danceFloor.occupied == False:
+                            self.target = danceFloor
+                    self.target.occupied = True
+                    self.state = "Preparing to dance"
                 else:
                     self.stateTime = random.randint(600,900)
                     self.state = "Foraging randomly"
@@ -126,6 +155,11 @@ class Bee:
             flowerDistance = sharedfunctions.distanceBetweenVertices(
             (flower.xPos,flower.yPos),(self.hive.xPos,self.hive.yPos))
             self.memoryStore.append(Memory(flowerVector,flowerDistance,flower))
+    def returnToHive(self):
+        import random
+        self.state = "Returning to hive"
+        self.target = sharedfunctions.pointAround(self.hive,
+        random.randint(0,self.hive.radius))
     def attendDance(self,danceFloor):
         import random
 class Memory:
@@ -156,6 +190,8 @@ class Hive:
         self.xPos = xPos
         self.yPos = yPos
         self.pollenStore = 0
+        self.danceFloors = []
+        self.beeArray = []
 
 class Flower:
     summaryText = open('assets/summary/flower.txt','r').read()

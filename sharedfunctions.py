@@ -19,3 +19,9 @@ def pointAround(target,radius):
         target.yPos + (radius * math.sin(direction)))
 def distanceBetweenVertices(vertex1,vertex2):
     return (((vertex1[0] - vertex2[0])**2) + ((vertex1[1] - vertex2[1])**2))**0.5
+def danceFloorFree(hive):
+    toReturn = False
+    for danceFloor in hive.danceFloors:
+        if danceFloor.occupied == False:
+            toReturn = True
+    return toReturn

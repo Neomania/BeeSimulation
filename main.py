@@ -71,6 +71,8 @@ hiveArray = [] #in the odd case that we eventually add more hives
 
 home = Hive(0.0,0.0)
 hiveArray.append(home)
+home.danceFloors.append(danceFloorArray[0])
+home.danceFloors.append(danceFloorArray[1])
 
 #FONTS
 testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -114,6 +116,44 @@ while True: #MAIN GAME LOOP
                     bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Returning to hive":
                     bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Preparing to dance":
+                    bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Performing round dance":
+                    bee.updatePosition()
+                    bee.direction = bee.direction + bee.directionIncrement
+                    bee.stateTime = bee.stateTime - 1
+                    if bee.stateTime <= 0:
+                        for attendant in bee.target.beesOnFloor:
+                            attendant.roundDanced = True
+                            bee.target.beesOnFloor.remove(attendant)
+                        bee.target.occupied = False
+                        bee.returnToHive()
+                elif bee.state == "Searching local area":
+                    if bee.stateTime <= 0:
+                        bee.returnToHive()
+                    elif bee.subStateTime <= 0:
+                        bee.target = sharedfunctions.pointAround(bee.hive,
+                        random.randint(10,200))
+                        bee.subStateTime = random.randint(200,240)
+                    else:
+                        bee.subStateTime = bee.subStateTime - 1
+                        bee.stateTime = bee.stateTime - 1
+                        #check for nearby unoccupied flower
+                        nearestToBee = 9999999999.9
+                        nearestFlower = None
+                        for flower in flowerArray:
+                            if flower.occupied == False and (flower not in bee.visitedFlowers):
+                                distanceToBee = distanceBetweenVertices(
+                                (flower.xPos,flower.yPos),(bee.xPos,bee.yPos))
+                                if distanceToBee < nearestToBee and distanceToBee < 50:
+                                    print("BOP")
+                                    nearestToBee = distanceToBee
+                                    nearestFlower = flower
+                        if nearestFlower != None:
+                            nearestFlower.acceptBee(bee)
+                            bee.state = "Moving to flower"
+                            bee.target = nearestFlower
+                            print("BEP")
                 elif bee.state == "Idle":
                     bee.stateTime = bee.stateTime - 1
                     if bee.stateTime <= 0:
@@ -143,9 +183,7 @@ while True: #MAIN GAME LOOP
                         bee.target = nearestFlower
                         print("BEP")
                     if bee.stateTime <= 0:
-                        bee.state = "Returning to hive"
-                        bee.target = sharedfunctions.pointAround(bee.hive,
-                        random.randint(0,hive.radius))
+                        bee.returnToHive()
                 elif bee.state == "Moving to flower":
                     bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Harvesting pollen":
@@ -153,10 +191,14 @@ while True: #MAIN GAME LOOP
                     if bee.stateTime <= 0: #done
                         bee.visitedFlowers.append(bee.target)
                         bee.createMemoryAbout(bee.target)
-                        bee.state = "Returning to hive"
+                        if bee.roundDanced:
+                            bee.state = "Searching local area"
+                            bee.subStateTime = random.randint(200,240)
+                            bee.target = sharedfunctions.pointAround(
+                            bee.hive,random.randint(10,200))
+                        else:
+                            bee.state = "Foraging randomly"
                         bee.target.doneWithBee()
-                        bee.target = sharedfunctions.pointAround(bee.hive,
-                        random.randint(0,hive.radius))
                 elif bee.state == "Moving to known food source":
                     bee.moveTowardsMemory()
 
