@@ -81,18 +81,15 @@ pygame.freetype.init()
 
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
-beeArray.append(Bee(home))
-beeArray.append(Bee(home))
-beeArray.append(Bee(home))
-beeArray.append(Bee(home))
-beeArray.append(Bee(home))
-beeArray.append(Bee(home))
+for i in range(0,25):
+    beeArray.append(Bee(home))
 
 flowerArray.append(Flower(305,300,GREEN,0.5))
 flowerArray.append(Flower(305,305,GREEN,0.5))
 flowerArray.append(Flower(300,300,GREEN,0.5))
 flowerArray.append(Flower(310,310,GREEN,0.5))
 flowerArray.append(Flower(300,310,GREEN,0.5))
+flowerArray.append(Flower(200,200,BLUE,1))
 
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
@@ -118,15 +115,38 @@ while True: #MAIN GAME LOOP
                     bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Preparing to dance":
                     bee.moveDirectlyTowards(bee.target)
+                elif bee.state == "Attending dance":
+                    bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Performing round dance":
                     bee.updatePosition()
                     bee.direction = bee.direction + bee.directionIncrement
                     bee.stateTime = bee.stateTime - 1
                     if bee.stateTime <= 0:
                         for attendant in bee.target.beesOnFloor:
-                            attendant.roundDanced = True
+                            if random.random() > 0.5:
+                                attendant.roundDanced = True
                             bee.target.beesOnFloor.remove(attendant)
+                            attendant.returnToHive()
                         bee.target.occupied = False
+                        bee.returnToHive()
+                elif bee.state == "Performing waggle dance":
+                    bee.stateTime = bee.stateTime - 1
+                    if bee.distanceTravelled >= bee.wdLength:
+                        bee.xPos = bee.wdStart[0]
+                        bee.yPos = bee.wdStart[1]
+                        bee.distanceTravelled = 0
+                    else:
+                        bee.updatePosition()
+                        bee.distanceTravelled = bee.distanceTravelled + bee.vel
+                    if bee.stateTime <= 0:
+                        for attendant in bee.target.beesOnFloor:
+                            if random.random() > 0.5:
+                                attendant.createMemoryAbout(bee.memoryStore[0].flower)
+                            attendant.returnToHive()
+                        try:
+                            bee.target.occupied = False
+                        except:
+                            print(bee.target)
                         bee.returnToHive()
                 elif bee.state == "Searching local area":
                     if bee.stateTime <= 0:
@@ -146,14 +166,12 @@ while True: #MAIN GAME LOOP
                                 distanceToBee = distanceBetweenVertices(
                                 (flower.xPos,flower.yPos),(bee.xPos,bee.yPos))
                                 if distanceToBee < nearestToBee and distanceToBee < 50:
-                                    print("BOP")
                                     nearestToBee = distanceToBee
                                     nearestFlower = flower
                         if nearestFlower != None:
                             nearestFlower.acceptBee(bee)
                             bee.state = "Moving to flower"
                             bee.target = nearestFlower
-                            print("BEP")
                 elif bee.state == "Idle":
                     bee.stateTime = bee.stateTime - 1
                     if bee.stateTime <= 0:
@@ -174,14 +192,12 @@ while True: #MAIN GAME LOOP
                             distanceToBee = distanceBetweenVertices(
                             (flower.xPos,flower.yPos),(bee.xPos,bee.yPos))
                             if distanceToBee < nearestToBee and distanceToBee < 50:
-                                print("BOP")
                                 nearestToBee = distanceToBee
                                 nearestFlower = flower
                     if nearestFlower != None:
                         nearestFlower.acceptBee(bee)
                         bee.state = "Moving to flower"
                         bee.target = nearestFlower
-                        print("BEP")
                     if bee.stateTime <= 0:
                         bee.returnToHive()
                 elif bee.state == "Moving to flower":
@@ -193,11 +209,15 @@ while True: #MAIN GAME LOOP
                         bee.createMemoryAbout(bee.target)
                         if bee.roundDanced:
                             bee.state = "Searching local area"
+                            bee.stateTime = bee.subStateTime
                             bee.subStateTime = random.randint(200,240)
                             bee.target = sharedfunctions.pointAround(
                             bee.hive,random.randint(10,200))
                         else:
                             bee.state = "Foraging randomly"
+                            bee.stateTime = bee.subStateTime
+                            bee.subStateTime = 0
+
                         bee.target.doneWithBee()
                 elif bee.state == "Moving to known food source":
                     bee.moveTowardsMemory()

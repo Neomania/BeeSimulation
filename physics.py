@@ -33,6 +33,11 @@ class Bee:
         self.distanceTravelled = 0
         self.visitedFlowers = []
         self.hive.beeArray.append(self)
+
+        #waggle dance variables
+        self.wdLength = 0
+        self.wdAmp = 0
+        self.wdStart = (0,0)
     def houseKeep(self):
         while self.direction > 360:
             self.direction = self.direction - 360
@@ -62,14 +67,9 @@ class Bee:
         self.xPos = self.xPos + (self.vel * math.cos(math.radians(self.direction)))
         self.yPos = self.yPos + (self.vel * math.sin(math.radians(self.direction)))
     def decideNextState(self):#Catch all event for end of state
-        import random
+        import random, math
         if self.state == "Moving to dance floor":
-            self.target.beesOnFloor.append(self)
             self.state = "Attending dance"
-        elif self.state == "Attending dance":
-            self.target = sharedfunctions.pointAround(self.hive,
-            random.randint(0,self.hive.radius))
-            self.state = "Returning to hive"
         elif self.state == "Returning to hive":
             self.state = "Idle"
             self.stateTime = random.randint(60,240)
@@ -77,11 +77,30 @@ class Bee:
         elif self.state == "Preparing to dance": #create dance, recruit bees
             if self.memoryStore[0].distance < 200: #round dance
                 self.state = "Performing round dance"
+                self.stateTime = 600
                 self.directionIncrement = 6
                 self.yPos = self.yPos - 2
                 self.direction = 0
             else:
                 self.state = "Performing waggle dance"
+                self.stateTime = 600
+                self.wdLength = ((self.memoryStore[0].distance/1000)
+                * (self.target.radius * 2))
+                self.wdAmp = (self.memoryStore[0].flower.pollenRate * 2)
+                self.direction = self.memoryStore[0].direction
+                self.wdStart = ((-self.wdLength * (math.cos(math.radians(self.direction)))) + self.target.xPos,
+                (-self.wdLength * (math.sin(math.radians(self.direction)))) + self.target.yPos)
+                self.xPos = self.wdStart[0]
+                self.yPos = self.wdStart[1]
+                self.distanceTravelled = 0
+            for bee in self.hive.beeArray:
+                if bee.state == "Idle":
+                    chance = random.random()
+                    if chance > 0.5:
+                        bee.state = "Moving to dance floor"
+                        bee.target = sharedfunctions.pointAround(self.target,
+                        self.target.radius)
+                        self.target.beesOnFloor.append(bee)
 
         elif self.state == "Idle": #probably the most complex
             if self.roundDanced: #if a round dance has been watched
@@ -120,6 +139,7 @@ class Bee:
                     self.distanceTravelled = 0
                 elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
                     #do your dance at the space jam
+                    print("AAAAAAAAA")
                     for danceFloor in self.hive.danceFloors:
                         if danceFloor.occupied == False:
                             self.target = danceFloor
@@ -131,6 +151,7 @@ class Bee:
                     self.direction = random.randrange(0,360)
         elif self.state == "Moving to flower":#docking request accepted
             self.state = "Harvesting pollen"
+            self.subStateTime = self.stateTime #use substate as holder
             self.stateTime = round(200 / self.target.pollenRate)
     def moveTowardsMemory(self):#moves towards memory using distance and dir
         import random
