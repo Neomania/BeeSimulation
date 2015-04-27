@@ -104,50 +104,54 @@ class Bee:
                         self.target.beesOnFloor.append(bee)
 
         elif self.state == "Idle": #probably the most complex
-            if self.roundDanced: #if a round dance has been watched
-                decision = random.random()
-                if decision < 0.1:
-                    self.state = "Idle"
-                    self.stateTime = random.randint(60,240)
-                elif decision < 0.7:
-                    self.state = "Searching local area"
-                    self.stateTime = random.randint(600,900)
-                    self.subStateTime = 0
-                elif decision < 0.8 and self.memoryStore != []:
-                    self.state = "Moving to known food source"
-                    self.target = self.memoryStore[0]
-                    self.distanceTravelled = 0
-                elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
-                    #do your dance at the space jam
-                    for danceFloor in self.hive.danceFloors:
-                        if danceFloor.occupied == False:
-                            self.target = danceFloor
-                    self.target.occupied = True
-                    self.state = "Preparing to dance"
-                else: #Randomly wander
-                    self.stateTime = random.randint(600,900)
-                    self.state = "Foraging randomly"
-                    self.direction = random.randrange(0,360)
+##            if self.roundDanced: #if a round dance has been watched
+##                decision = random.random()
+##                if decision < 0.1:
+##                    self.state = "Idle"
+##                    self.stateTime = random.randint(60,240)
+##                elif decision < 0.7:
+##                    self.state = "Searching local area"
+##                    self.stateTime = random.randint(600,900)
+##                    self.subStateTime = 0
+##                elif decision < 0.8 and self.memoryStore != []:
+##                    self.state = "Moving to known food source"
+##                    self.target = self.memoryStore[0]
+##                    self.distanceTravelled = 0
+##                elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
+##                    #do your dance at the space jam
+##                    for danceFloor in self.hive.danceFloors:
+##                        if danceFloor.occupied == False:
+##                            self.target = danceFloor
+##                    self.target.occupied = True
+##                    self.state = "Preparing to dance"
+##                else: #Randomly wander
+##                    self.stateTime = random.randint(600,900)
+##                    self.state = "Foraging randomly"
+##                    self.direction = random.randrange(0,360)
+##            else:
+            decision = random.random()
+            if decision < 0.1:
+                self.state = "Idle"
+                self.stateTime = random.randint(60,240)
+            elif decision < 0.7 and self.roundDanced:
+                self.state = "Searching local area"
+                self.stateTime = random.randint(600,900)
+                self.subStateTime = 0
+            elif decision < 0.8 and self.memoryStore != []:
+                self.state = "Moving to known food source"
+                self.target = self.memoryStore[0]
+                self.distanceTravelled = 0
+            elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
+                #do your dance at the space jam
+                for danceFloor in self.hive.danceFloors:
+                    if danceFloor.occupied == False:
+                        self.target = danceFloor
+                self.target.occupied = True
+                self.state = "Preparing to dance"
             else:
-                decision = random.random()
-                if decision < 0.1:
-                    self.state = "Idle"
-                    self.stateTime = random.randint(60,240)
-                elif decision < 0.8 and self.memoryStore != []:
-                    self.state = "Moving to known food source"
-                    self.target = self.memoryStore[0]
-                    self.distanceTravelled = 0
-                elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
-                    #do your dance at the space jam
-                    for danceFloor in self.hive.danceFloors:
-                        if danceFloor.occupied == False:
-                            self.target = danceFloor
-                    self.target.occupied = True
-                    self.state = "Preparing to dance"
-                else:
-                    self.stateTime = random.randint(600,900)
-                    self.state = "Foraging randomly"
-                    self.direction = random.randrange(0,360)
+                self.stateTime = random.randint(600,900)
+                self.state = "Foraging randomly"
+                self.direction = random.randrange(0,360)
         elif self.state == "Moving to flower":#docking request accepted
             self.state = "Harvesting pollen"
             self.subStateTime = self.stateTime #use substate as holder

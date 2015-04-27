@@ -424,7 +424,6 @@ while True: #MAIN GAME LOOP
             displaySurface.blit(button.spriteSheet,
             button.rect,
             button.unclickableRect)
-    print(ui.pollenRateDivision.textArray)
     pygame.display.update()
     clock.tick(FPS)
 
