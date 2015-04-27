@@ -74,6 +74,7 @@ class Bee:
             self.state = "Idle"
             self.stateTime = random.randint(60,240)
             self.visitedFlowers = []
+            self.sortMemory()
         elif self.state == "Preparing to dance": #create dance, recruit bees
             if self.memoryStore[0].distance < 200: #round dance
                 self.state = "Performing round dance"
@@ -88,12 +89,12 @@ class Bee:
                 * (self.target.radius * 2))
                 self.wdAmp = (self.memoryStore[0].flower.pollenRate * 2)
                 self.direction = self.memoryStore[0].direction
-                self.wdStart = ((-self.wdLength * (math.cos(math.radians(self.direction)))) + self.target.xPos,
-                (-self.wdLength * (math.sin(math.radians(self.direction)))) + self.target.yPos)
+                self.wdStart = (((0 - self.wdLength*0.5) * (math.cos(math.radians(self.direction)))) + self.target.xPos,
+                ((0 - self.wdLength*0.5) * (math.sin(math.radians(self.direction)))) + self.target.yPos)
                 self.xPos = self.wdStart[0]
                 self.yPos = self.wdStart[1]
                 self.distanceTravelled = 0
-            for bee in self.hive.beeArray:
+            for bee in self.hive.beeArray: #recruit bees
                 if bee.state == "Idle":
                     chance = random.random()
                     if chance > 0.5:
@@ -134,12 +135,10 @@ class Bee:
                     self.stateTime = random.randint(60,240)
                 elif decision < 0.8 and self.memoryStore != []:
                     self.state = "Moving to known food source"
-                    print("pathing")
                     self.target = self.memoryStore[0]
                     self.distanceTravelled = 0
                 elif decision < 0.9 and sharedfunctions.danceFloorFree(self.hive) and self.memoryStore != []:
                     #do your dance at the space jam
-                    print("AAAAAAAAA")
                     for danceFloor in self.hive.danceFloors:
                         if danceFloor.occupied == False:
                             self.target = danceFloor
@@ -181,6 +180,14 @@ class Bee:
         self.state = "Returning to hive"
         self.target = sharedfunctions.pointAround(self.hive,
         random.randint(0,self.hive.radius))
+    def sortMemory(self):#Simple one-run bubble sort
+        if self.memoryStore != []:
+            for memory in self.memoryStore:
+                if memory.flower.pollenRate > self.memoryStore[0].flower.pollenRate:
+                    swapIndex = self.memoryStore.index(memory)
+                    holdingMemory = self.memoryStore[0] #excuse the mess, necessary for lists
+                    self.memoryStore[0] = memory
+                    self.memoryStore[swapIndex] = holdingMemory
     def attendDance(self,danceFloor):
         import random
 class Memory:

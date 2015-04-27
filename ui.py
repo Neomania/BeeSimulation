@@ -227,7 +227,7 @@ increaseSpeedButton = (Button(812,437,63,63, #SPEEDUP BUTTON
 'assets/ui/increaseSpeed.png',increaseSpeed))
 buttonArray.append(increaseSpeedButton)
 newFlowerButton = (Button(875,375,125,125, #NEW FLOWER BUTTON
-'assets/ui/newFlower.png'))
+'assets/ui/newFlower.png',toggleFlower))
 buttonArray.append(newFlowerButton)
 showDetailButton = (Button(975,275,25,25,
 'assets/ui/showDetail.png',showDetail))
@@ -238,6 +238,13 @@ buttonArray.append(selectNextButton)
 selectPrevButton = (Button(750,275,25,25,
 'assets/ui/showDetail.png',selectPrev))
 buttonArray.append(selectPrevButton)
+increasePollenRateButton = Button(750,550,50,25,
+'assets/ui/increasePollenRate.png',increaseFlowerRate)
+buttonArray.append(increasePollenRateButton)
+decreasePollenRateButton = Button(750,575,50,25,
+'assets/ui/decreasePollenRate.png',decreaseFlowerRate)
+buttonArray.append(decreasePollenRateButton)
+
 
 textDivisionArray = []
 
@@ -249,6 +256,11 @@ testString,infoBoxDivision.characterWidth)
 speedDivision = textDivision(750,375,125,62,speedFont,speedFontSize)
 textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
+
+pollenRateDivision = textDivision(950,550,50,50,pollenRateFont,
+pollenRateFontSize)
+textDivisionArray.append(pollenRateDivision)
+pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
 
 #DETAILS
 detailSurface = pygame.Surface((700,750))

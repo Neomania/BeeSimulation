@@ -4,3 +4,6 @@ windowHeight = 750
 displayingDetail = False
 selectedItem = None
 selectedBeeArray = []
+flowerPlacing = False
+createdFlowerRate = 1.0
+createdFlowerColour = (100,100,100)

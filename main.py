@@ -66,6 +66,8 @@ globalcfg.selectedBeeArray = []
 
 danceFloorArray.append(DanceFloor(40,0))
 danceFloorArray.append(DanceFloor(-40,0))
+danceFloorArray.append(DanceFloor(0,40))
+danceFloorArray.append(DanceFloor(0,-40))
 
 hiveArray = [] #in the odd case that we eventually add more hives
 
@@ -73,6 +75,8 @@ home = Hive(0.0,0.0)
 hiveArray.append(home)
 home.danceFloors.append(danceFloorArray[0])
 home.danceFloors.append(danceFloorArray[1])
+home.danceFloors.append(danceFloorArray[2])
+home.danceFloors.append(danceFloorArray[3])
 
 #FONTS
 testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -116,15 +120,14 @@ while True: #MAIN GAME LOOP
                 elif bee.state == "Preparing to dance":
                     bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Attending dance":
-                    bee.moveDirectlyTowards(bee.target)
+                    pass
                 elif bee.state == "Performing round dance":
                     bee.updatePosition()
                     bee.direction = bee.direction + bee.directionIncrement
                     bee.stateTime = bee.stateTime - 1
                     if bee.stateTime <= 0:
                         for attendant in bee.target.beesOnFloor:
-                            if random.random() > 0.5:
-                                attendant.roundDanced = True
+                            attendant.roundDanced = True
                             bee.target.beesOnFloor.remove(attendant)
                             attendant.returnToHive()
                         bee.target.occupied = False
@@ -139,14 +142,14 @@ while True: #MAIN GAME LOOP
                         bee.updatePosition()
                         bee.distanceTravelled = bee.distanceTravelled + bee.vel
                     if bee.stateTime <= 0:
-                        for attendant in bee.target.beesOnFloor:
-                            if random.random() > 0.5:
-                                attendant.createMemoryAbout(bee.memoryStore[0].flower)
-                            attendant.returnToHive()
                         try:
                             bee.target.occupied = False
                         except:
                             print(bee.target)
+                        for attendant in bee.target.beesOnFloor:
+                            bee.target.beesOnFloor.remove(attendant)
+                            attendant.createMemoryAbout(bee.memoryStore[0].flower)
+                            attendant.returnToHive()
                         bee.returnToHive()
                 elif bee.state == "Searching local area":
                     if bee.stateTime <= 0:
@@ -207,6 +210,7 @@ while True: #MAIN GAME LOOP
                     if bee.stateTime <= 0: #done
                         bee.visitedFlowers.append(bee.target)
                         bee.createMemoryAbout(bee.target)
+                        bee.target.doneWithBee()
                         if bee.roundDanced:
                             bee.state = "Searching local area"
                             bee.stateTime = bee.subStateTime
@@ -217,8 +221,6 @@ while True: #MAIN GAME LOOP
                             bee.state = "Foraging randomly"
                             bee.stateTime = bee.subStateTime
                             bee.subStateTime = 0
-
-                        bee.target.doneWithBee()
                 elif bee.state == "Moving to known food source":
                     bee.moveTowardsMemory()
 
@@ -250,7 +252,9 @@ while True: #MAIN GAME LOOP
                                             vid.movie.stop()
                                     element.play() #why does this fix the problem
                                     element.play() #this is an affront to everything I stand for
-
+                elif mousePos[0] <= simWidth and globalcfg.flowerPlacing == True:
+                    flowerArray.append(Flower(mousePosWorld[0],mousePosWorld[1],
+                    globalcfg.createdFlowerColour,globalcfg.createdFlowerRate))
                 elif mousePos[0] <= simWidth and globalcfg.displayingDetail == False:
                     if selecting == False:
                         selecting = True
@@ -328,7 +332,6 @@ while True: #MAIN GAME LOOP
                 pygame.draw.circle(simSurface,RED,
                 (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
                 10,2)
-                print(bee.state)
             else:
                 pygame.draw.circle(simSurface,RED,
                 (round(bee.xPos + (simWidth/2)),round(bee.yPos + (simHeight/2))),
@@ -421,6 +424,7 @@ while True: #MAIN GAME LOOP
             displaySurface.blit(button.spriteSheet,
             button.rect,
             button.unclickableRect)
+    print(ui.pollenRateDivision.textArray)
     pygame.display.update()
     clock.tick(FPS)
 

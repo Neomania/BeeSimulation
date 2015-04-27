@@ -17,3 +17,5 @@ speedFontSize = 26
 speedFont = pygame.freetype.SysFont('Helvetica',speedFontSize)
 detailedFontSize = 12
 detailedFont = pygame.freetype.SysFont('Consolas',detailedFontSize)
+pollenRateFontSize = 16
+pollenRateFont = pygame.freetype.SysFont('Consolas',pollenRateFontSize)
