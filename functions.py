@@ -50,12 +50,12 @@ def selectPrev():
         #sticks the removed item to the start of the array
 def toggleFlower():
     globalcfg.flowerPlacing = not globalcfg.flowerPlacing
-def increaseFlowerRate():
-    globalcfg.createdFlowerRate = globalcfg.createdFlowerRate + 0.1
+def increaseFlowerRate():#rounding necessary because of double precision
+    globalcfg.createdFlowerRate = round(globalcfg.createdFlowerRate + 0.1,1)
     ui.pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
 def decreaseFlowerRate():
     if globalcfg.createdFlowerRate >= 0.1:
-        globalcfg.createdFlowerRate = globalcfg.createdFlowerRate - 0.1
+        globalcfg.createdFlowerRate = round(globalcfg.createdFlowerRate - 0.1,1)
     ui.pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
 
 def divideStringIntoList(stringToDivide,lineLength): #@ is a line break

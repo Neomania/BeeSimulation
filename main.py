@@ -211,7 +211,9 @@ while True: #MAIN GAME LOOP
                         bee.visitedFlowers.append(bee.target)
                         bee.createMemoryAbout(bee.target)
                         bee.target.doneWithBee()
-                        if bee.roundDanced:
+                        if len(bee.visitedFlowers) >= 5:
+                            bee.returnToHive()
+                        elif bee.roundDanced:
                             bee.state = "Searching local area"
                             bee.stateTime = bee.subStateTime
                             bee.subStateTime = random.randint(200,240)
@@ -305,6 +307,7 @@ while True: #MAIN GAME LOOP
     else:
         ui.selectNextButton.clickable = True
         ui.selectPrevButton.clickable = True
+
     #DRAW SIMULATION
     simSurface.fill(BLACK)
     for hive in hiveArray:
@@ -426,8 +429,3 @@ while True: #MAIN GAME LOOP
             button.unclickableRect)
     pygame.display.update()
     clock.tick(FPS)
-
-##if __name__ == '__main__':
-##    from pygame.locals import *
-##    from physics import *
-##    main()

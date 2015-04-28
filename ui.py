@@ -253,12 +253,16 @@ textDivisionArray.append(infoBoxDivision)
 infoBoxDivision.textArray = divideStringIntoList(
 testString,infoBoxDivision.characterWidth)
 
+selectionInfoDivision = textDivision(760,310,240,70,selectionFont,
+selectionFontSize,False)
+textDivisionArray.append(selectionInfoDivision)
+
 speedDivision = textDivision(750,375,125,62,speedFont,speedFontSize)
 textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
 
-pollenRateDivision = textDivision(950,550,50,50,pollenRateFont,
-pollenRateFontSize)
+pollenRateDivision = textDivision(950,573,50,50,pollenRateFont,
+pollenRateFontSize) #displays pollen rate for created flowers
 textDivisionArray.append(pollenRateDivision)
 pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
 
@@ -285,3 +289,17 @@ def updateSummary():
         infoBoxDivision.textArray = divideStringIntoList(
         globalcfg.selectedItem.summaryText,infoBoxDivision.characterWidth)
         showDetailButton.clickable = True
+def updateSelection():#called each frame, gives technical info on selected item
+    if globalcfg.selectedItem == None:
+        selectionInfoDivision.textArray = []
+    else:
+        selectionType = str(type(globalcfg.selectedItem))
+        if selectionType == "Bee":
+            if globalcfg.selectedItem.state == "Moving randomly":
+                selectionInfoDivision.textArray.append("Just looking around.")
+            elif globalcfg.selectedItem.state == "Searching local area":
+                selectionInfoDivision.textArray.append("Looking near the hive.")
+            elif globalcfg.selectedItem.state == "Attending dance":
+                selectionInfoDivision.textArray.append("Watching a dance!")
+            elif globalcfg.selectedItem.state == "":
+                selectionInfoDivision.textArray.append("")
