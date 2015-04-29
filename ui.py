@@ -213,7 +213,6 @@ def updateDetail(): #dammit past timothy comment on your code more
         pass
     else:
         prepareDetail(globalcfg.selectedItem.detailString)
-    print(textDivisionArray)
 
 expandingCircleArray = []
 
@@ -245,6 +244,39 @@ decreasePollenRateButton = Button(750,575,50,25,
 'assets/ui/decreasePollenRate.png',decreaseFlowerRate)
 buttonArray.append(decreasePollenRateButton)
 
+#Flower colour buttons
+redButton = Button(750,600,50,50,'assets/ui/redButton.png',changeFlowerColour,
+(242,87,70))
+orangeButton = Button(800,600,50,50,'assets/ui/orangeButton.png',changeFlowerColour,
+(242,173,70))
+yellowButton = Button(850,600,50,50,'assets/ui/yellowButton.png',changeFlowerColour,
+(242,239,70))
+greenButton = Button(900,600,50,50,'assets/ui/greenButton.png',changeFlowerColour,
+(179,242,70))
+blueButton = Button(950,600,50,50,'assets/ui/blueButton.png',changeFlowerColour,
+(70,173,242))
+purpleButton = Button(750,650,50,50,'assets/ui/purpleButton.png',changeFlowerColour,
+(171,70,242))
+pinkButton = Button(800,650,50,50,'assets/ui/pinkButton.png',changeFlowerColour,
+(255,128,255))
+brownButton = Button(850,650,50,50,'assets/ui/brownButton.png',changeFlowerColour,
+(179,80,15))
+whiteButton = Button(900,650,50,50,'assets/ui/whiteButton.png',changeFlowerColour,
+(255,255,255))
+greyButton = Button(950,650,50,50,'assets/ui/greyButton.png',changeFlowerColour,
+(125,125,125))
+
+buttonArray.append(redButton)
+buttonArray.append(orangeButton)
+buttonArray.append(yellowButton)
+buttonArray.append(greenButton)
+buttonArray.append(blueButton)
+buttonArray.append(purpleButton)
+buttonArray.append(pinkButton)
+buttonArray.append(brownButton)
+buttonArray.append(whiteButton)
+buttonArray.append(greyButton)
+
 
 textDivisionArray = []
 
@@ -257,9 +289,14 @@ selectionInfoDivision = textDivision(760,310,240,70,selectionFont,
 selectionFontSize,False)
 textDivisionArray.append(selectionInfoDivision)
 
-speedDivision = textDivision(750,375,125,62,speedFont,speedFontSize)
+speedDivision = textDivision(755,400,125,62,speedFont,speedFontSize)
 textDivisionArray.append(speedDivision)
 speedDivision.textArray = ['speed: 1x']
+
+flowerPlacingDivision = textDivision(950,515,50,50,pollenRateFont,
+pollenRateFontSize)
+textDivisionArray.append(flowerPlacingDivision)
+flowerPlacingDivision.textArray = ["No"]
 
 pollenRateDivision = textDivision(950,573,50,50,pollenRateFont,
 pollenRateFontSize) #displays pollen rate for created flowers
@@ -278,7 +315,6 @@ detailButtons = [Button(725,0,25,25,'assets/ui/closeDetail.png',closeDetail),
 #DEBUG
 textDivisionArray.append(detailTextDiv)
 prepareDetail(open("assets/summary/bee.txt","r").read())
-print(detailElements)
 
 def updateSummary():
     if globalcfg.selectedItem == None:

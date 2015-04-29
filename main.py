@@ -64,19 +64,19 @@ flowerArray = []
 danceFloorArray = []
 globalcfg.selectedBeeArray = []
 
-danceFloorArray.append(DanceFloor(40,0))
-danceFloorArray.append(DanceFloor(-40,0))
+danceFloorArray.append(DanceFloor(-35,-20))
+danceFloorArray.append(DanceFloor(-35,20))
 danceFloorArray.append(DanceFloor(0,40))
 danceFloorArray.append(DanceFloor(0,-40))
+danceFloorArray.append(DanceFloor(35,20))
+danceFloorArray.append(DanceFloor(35,-20))
 
 hiveArray = [] #in the odd case that we eventually add more hives
 
 home = Hive(0.0,0.0)
 hiveArray.append(home)
-home.danceFloors.append(danceFloorArray[0])
-home.danceFloors.append(danceFloorArray[1])
-home.danceFloors.append(danceFloorArray[2])
-home.danceFloors.append(danceFloorArray[3])
+for i in range(0,6):
+    home.danceFloors.append(danceFloorArray[i])
 
 #FONTS
 testString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -87,13 +87,6 @@ infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 for i in range(0,25):
     beeArray.append(Bee(home))
-
-flowerArray.append(Flower(305,300,GREEN,0.5))
-flowerArray.append(Flower(305,305,GREEN,0.5))
-flowerArray.append(Flower(300,300,GREEN,0.5))
-flowerArray.append(Flower(310,310,GREEN,0.5))
-flowerArray.append(Flower(300,310,GREEN,0.5))
-flowerArray.append(Flower(200,200,BLUE,1))
 
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
@@ -128,8 +121,8 @@ while True: #MAIN GAME LOOP
                     if bee.stateTime <= 0:
                         for attendant in bee.target.beesOnFloor:
                             attendant.roundDanced = True
-                            bee.target.beesOnFloor.remove(attendant)
                             attendant.returnToHive()
+                        bee.target.beesOnFloor = []
                         bee.target.occupied = False
                         bee.returnToHive()
                 elif bee.state == "Performing waggle dance":
@@ -147,9 +140,9 @@ while True: #MAIN GAME LOOP
                         except:
                             print(bee.target)
                         for attendant in bee.target.beesOnFloor:
-                            bee.target.beesOnFloor.remove(attendant)
                             attendant.createMemoryAbout(bee.memoryStore[0].flower)
                             attendant.returnToHive()
+                        bee.target.beesOnFloor = []
                         bee.returnToHive()
                 elif bee.state == "Searching local area":
                     if bee.stateTime <= 0:
@@ -175,6 +168,8 @@ while True: #MAIN GAME LOOP
                             nearestFlower.acceptBee(bee)
                             bee.state = "Moving to flower"
                             bee.target = nearestFlower
+                        else: #no nearby flowers
+                            bee.moveDirectlyTowards(bee.target)
                 elif bee.state == "Idle":
                     bee.stateTime = bee.stateTime - 1
                     if bee.stateTime <= 0:
@@ -299,7 +294,6 @@ while True: #MAIN GAME LOOP
                         ui.speedDivision.textArray = ui.divideStringIntoList(
                         str("speed: " + str(globalcfg.speedMultiplier) + 'x'
                         ),ui.speedDivision.characterWidth)
-                        print(ui.speedDivision.textArray)
 
     if globalcfg.selectedBeeArray == []:
         ui.selectNextButton.clickable = False

@@ -15,7 +15,6 @@ def reduceSpeed():
 def increaseSpeed():
     globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
 def showDetail():
-    print("alksdnmlfks")
     for button in ui.buttonArray:
         button.clickable = False
     ui.detailTextDiv.scrollAmount = 0
@@ -23,9 +22,7 @@ def showDetail():
     globalcfg.displayingDetail = True
     for button in ui.detailButtons:
         button.clickable = True
-    print("blalh")
 def closeDetail():
-    print("closed")
     globalcfg.displayingDetail = False
     for button in ui.buttonArray:
         button.clickable = True
@@ -34,10 +31,8 @@ def closeDetail():
     for vid in ui.detailElements:
         if type(vid) is ui.Video:
             vid.movie.stop()
-    print("dun")
 def selectNext():
     if globalcfg.selectedBeeArray != []:
-        print(type(globalcfg.selectedItem))
         globalcfg.selectedBeeArray.remove(globalcfg.selectedItem)
         globalcfg.selectedBeeArray = globalcfg.selectedBeeArray + [globalcfg.selectedItem] #sticks the selected item to the end of the array
         globalcfg.selectedItem = globalcfg.selectedBeeArray[0] #makes the current first item in the array selected
@@ -50,6 +45,12 @@ def selectPrev():
         #sticks the removed item to the start of the array
 def toggleFlower():
     globalcfg.flowerPlacing = not globalcfg.flowerPlacing
+    if globalcfg.flowerPlacing:
+        ui.flowerPlacingDivision.textArray = ["Yes"]
+    else:
+        ui.flowerPlacingDivision.textArray = ["No"]
+def changeFlowerColour(colour):
+    globalcfg.createdFlowerColour = colour
 def increaseFlowerRate():#rounding necessary because of double precision
     globalcfg.createdFlowerRate = round(globalcfg.createdFlowerRate + 0.1,1)
     ui.pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]

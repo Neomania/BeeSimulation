@@ -71,15 +71,21 @@ class Bee:
         if self.state == "Moving to dance floor":
             self.state = "Attending dance"
         elif self.state == "Returning to hive":
+            if self.roundDanced: #disables round dance after some time
+                roundDanceChance = random.random()
+                if roundDanceChance < 0.1:
+                    self.roundDanced = False
             self.state = "Idle"
             self.stateTime = random.randint(60,240)
             self.visitedFlowers = []
             self.sortMemory()
+        elif self.state == "Searching local area":
+            self.subStateTime = 0
         elif self.state == "Preparing to dance": #create dance, recruit bees
             if self.memoryStore[0].distance < 200: #round dance
                 self.state = "Performing round dance"
                 self.stateTime = 600
-                self.directionIncrement = 6
+                self.directionIncrement = 5
                 self.yPos = self.yPos - 2
                 self.direction = 0
             else:
