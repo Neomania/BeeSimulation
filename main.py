@@ -395,6 +395,7 @@ while True: #MAIN GAME LOOP
                 button.rect,
                 button.neutralRect)
     #DRAW TEXT
+    ui.updateSelection()
     for div in ui.textDivisionArray:
         lineNumber = 0
         if div.textArray != None:

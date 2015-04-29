@@ -290,12 +290,14 @@ def updateSummary():
         globalcfg.selectedItem.summaryText,infoBoxDivision.characterWidth)
         showDetailButton.clickable = True
 def updateSelection():#called each frame, gives technical info on selected item
+    import physics
     if globalcfg.selectedItem == None:
         selectionInfoDivision.textArray = []
     else:
-        selectionType = str(type(globalcfg.selectedItem))
-        if selectionType == "Bee":
-            if globalcfg.selectedItem.state == "Moving randomly":
+        selectionInfoDivision.textArray = []
+        selectionType = type(globalcfg.selectedItem)
+        if selectionType == physics.Bee:
+            if globalcfg.selectedItem.state == "Foraging randomly":
                 selectionInfoDivision.textArray.append("Just looking around.")
             elif globalcfg.selectedItem.state == "Searching local area":
                 selectionInfoDivision.textArray.append("Looking near the hive.")
@@ -303,3 +305,10 @@ def updateSelection():#called each frame, gives technical info on selected item
                 selectionInfoDivision.textArray.append("Watching a dance!")
             elif globalcfg.selectedItem.state == "":
                 selectionInfoDivision.textArray.append("")
+            elif globalcfg.selectedItem.state == "":
+                selectionInfoDivision.textArray.append("")
+            selectionInfoDivision.textArray.append("Memories: " + str(len(
+            globalcfg.selectedItem.memoryStore)))
+            selectionInfoDivision.textArray.append(
+            "Flowers visited this flight: " + str(
+            len(globalcfg.selectedItem.visitedFlowers)))
