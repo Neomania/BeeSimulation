@@ -44,7 +44,7 @@ BLUE = (0,0,255)
 YELLOW = (0,255,255)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
-DETAILFONTCOLOUR = (147,161,161)
+DETAILFONTCOLOUR = (200,200,200)
 mousePos = (0,0)
 displaySurface = pygame.display.set_mode(
 (globalcfg.windowWidth,globalcfg.windowHeight))

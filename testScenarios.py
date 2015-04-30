@@ -11,23 +11,23 @@
 
 from physics import *
 
-testHive = Hive(100,100)
+testHive = Hive(0,0)
 testBee = Bee(testHive)
 
-testBee.sortMemory()
 testFlower1 = Flower(0,0,(0,0,0),1.0)
 testFlower2 = Flower(0,0,(0,0,0),2.0)
 testFlower3 = Flower(0,0,(0,0,0),3.0)
 testFlower4 = Flower(0,0,(0,0,0),4.0)
 testFlower5 = Flower(0,0,(0,0,0),5.0)
-testBee.createMemoryAbout(testFlower1)
+testBee.createMemoryAbout(testFlower4)
 testBee.createMemoryAbout(testFlower2)
 testBee.createMemoryAbout(testFlower3)
-testBee.createMemoryAbout(testFlower4)
 testBee.createMemoryAbout(testFlower5)
+testBee.createMemoryAbout(testFlower1)
 for memory in testBee.memoryStore:
     print(memory.flower.pollenRate)
 
+print("Sorting!")
 testBee.sortMemory()
 
 for memory in testBee.memoryStore:
