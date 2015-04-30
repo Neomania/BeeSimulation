@@ -207,9 +207,9 @@ def prepareDetail(detailString): #parses detail string into elements
                 preElementString = preElementString + detailString[i]
     if mode == "normal":
         detailElements = detailElements + divideStringIntoList(
-        preElementString,700)
+        preElementString,detailTextDiv.characterWidth)
 
-def updateDetail(): #dammit past timothy comment on your code more
+def updateDetail(): #[expletive] past timothy comment on your code more
     if globalcfg.selectedItem == None:
         pass
     else:
@@ -285,7 +285,7 @@ buttonArray.append(greyButton)
 
 textDivisionArray = []
 
-infoBoxDivision = (textDivision(760,5,230,295,infoFont,infoFontSize,True)) #INFOBOX
+infoBoxDivision = (textDivision(760,5,230,295,infoFont,infoFontSize,False)) #INFOBOX
 textDivisionArray.append(infoBoxDivision)
 infoBoxDivision.textArray = divideStringIntoList(
 testString,infoBoxDivision.characterWidth)

@@ -48,7 +48,7 @@ DETAILFONTCOLOUR = (147,161,161)
 mousePos = (0,0)
 displaySurface = pygame.display.set_mode(
 (globalcfg.windowWidth,globalcfg.windowHeight))
-scrollSpeed = 5
+scrollSpeed = 20
 globalcfg.displayingDetail = False #DENOTES IF GAME IS DISPLAYING DETAIL PANEL
 selectionStart = (0,0)
 selecting = False
@@ -246,6 +246,16 @@ while True: #MAIN GAME LOOP
                             bee.subStateTime = 0
                 elif bee.state == "Moving to known food source":
                     bee.moveTowardsMemory()
+            #Cleaning up extra bees
+            if activeBees > globalcfg.beeCount:
+                for bee in beeArray:
+                    if bee.state == "Idle" and bee != globalcfg.selectedItem and (
+                    activeBees > globalcfg.beeCount):
+                        beeArray.remove(bee)
+                        activeBees = activeBees - 1
+            elif activeBees < globalcfg.beeCount:
+                beeArray.append(Bee(home))
+                activeBees = activeBees + 1
 
     #USER INPUT HANDLING
     for event in pygame.event.get():
@@ -449,15 +459,5 @@ while True: #MAIN GAME LOOP
             displaySurface.blit(button.spriteSheet,
             button.rect,
             button.unclickableRect)
-    #Cleaning up extra bees
-    if activeBees > globalcfg.beeCount:
-        for bee in beeArray:
-            if bee.state == "Idle" and bee != globalcfg.selectedItem and (
-            activeBees > globalcfg.beeCount):
-                beeArray.remove(bee)
-                activeBees = activeBees - 1
-    elif activeBees < globalcfg.beeCount:
-        beeArray.append(Bee(home))
-        activeBees = activeBees + 1
     pygame.display.update()
     clock.tick(FPS)
