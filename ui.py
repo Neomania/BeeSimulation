@@ -232,10 +232,10 @@ showDetailButton = (Button(975,275,25,25,
 'assets/ui/showDetail.png',showDetail))
 buttonArray.append(showDetailButton)
 selectNextButton = (Button(950,275,25,25,
-'assets/ui/showDetail.png',selectNext))
+'assets/ui/rightArrow.png',selectNext))
 buttonArray.append(selectNextButton)
 selectPrevButton = (Button(750,275,25,25,
-'assets/ui/showDetail.png',selectPrev))
+'assets/ui/leftArrow.png',selectPrev))
 buttonArray.append(selectPrevButton)
 increasePollenRateButton = Button(750,550,50,25,
 'assets/ui/increasePollenRate.png',increaseFlowerRate)
@@ -317,8 +317,12 @@ textDivisionArray.append(detailTextDiv)
 prepareDetail(open("assets/summary/bee.txt","r").read())
 
 def updateSummary():
-    if globalcfg.selectedItem == None:
-        infoBoxDivision.textArray = divideStringIntoList("Select something!",
+    if globalcfg.selectedItem == None and globalcfg.flowerPlacing == False:
+        infoBoxDivision.textArray = divideStringIntoList("Click and drag to select bees, or click once to select other objects!",
+        infoBoxDivision.characterWidth)
+        showDetailButton.clickable = False
+    elif globalcfg.flowerPlacing:
+        infoBoxDivision.textArray = divideStringIntoList("Now placing a flower, selection disabled",
         infoBoxDivision.characterWidth)
         showDetailButton.clickable = False
     else:
@@ -337,14 +341,44 @@ def updateSelection():#called each frame, gives technical info on selected item
                 selectionInfoDivision.textArray.append("Just looking around.")
             elif globalcfg.selectedItem.state == "Searching local area":
                 selectionInfoDivision.textArray.append("Looking near the hive.")
-            elif globalcfg.selectedItem.state == "Attending dance":
+            elif globalcfg.selectedItem.state == "Attending dance" or (
+            globalcfg.selectedItem.state == "Moving to dance floor"):
                 selectionInfoDivision.textArray.append("Watching a dance!")
-            elif globalcfg.selectedItem.state == "":
-                selectionInfoDivision.textArray.append("")
-            elif globalcfg.selectedItem.state == "":
-                selectionInfoDivision.textArray.append("")
+            elif globalcfg.selectedItem.state == "Moving to known food source":
+                selectionInfoDivision.textArray.append(
+                "Going to a known food source")
+            elif globalcfg.selectedItem.state == "Harvesting pollen":
+                selectionInfoDivision.textArray.append("Harvesting from a flower")
+            elif globalcfg.selectedItem.state == "Preparing to dance":
+                selectionInfoDivision.textArray.append("Getting her dance on")
+            elif globalcfg.selectedItem.state == "Performing round dance":
+                selectionInfoDivision.textArray.append("Food source nearby!")
+            elif globalcfg.selectedItem.state == "Performing waggle dance":
+                selectionInfoDivision.textArray.append("Food source over there!")
+            elif globalcfg.selectedItem.state == "Returning to hive":
+                selectionInfoDivision.textArray.append("Going home")
+            elif globalcfg.selectedItem.state == "Idle":
+                selectionInfoDivision.textArray.append("Lazing around")
+            elif globalcfg.selectedItem.state == "Moving to flower":
+                selectionInfoDivision.textArray.append("Landing on a flower")
             selectionInfoDivision.textArray.append("Memories: " + str(len(
             globalcfg.selectedItem.memoryStore)))
             selectionInfoDivision.textArray.append(
             "Flowers visited this flight: " + str(
             len(globalcfg.selectedItem.visitedFlowers)))
+        elif selectionType == physics.Flower:
+            if globalcfg.selectedItem.occupied:
+                selectionInfoDivision.textArray.append("Catering to a bee")
+            else:
+                selectionInfoDivision.textArray.append("Not being bugged")
+            selectionInfoDivision.textArray.append("Pollen rate: " + str(
+            globalcfg.selectedItem.pollenRate))
+        elif selectionType == physics.DanceFloor:
+            if globalcfg.selectedItem.occupied:
+                selectionInfoDivision.textArray.append("Someone's dancing here!")
+                selectionInfoDivision.textArray.append("Number of attending bees: "
+                + str(len(globalcfg.selectedItem.beesOnFloor)))
+            else:
+                selectionInfoDivision.textArray.append("Nothing happening here.")
+        elif selectionType == physics.Hive:
+            selectionInfoDivision.textArray.append("The hive!")

@@ -118,7 +118,19 @@ while True: #MAIN GAME LOOP
                     bee.updatePosition()
                     bee.direction = bee.direction + bee.directionIncrement
                     bee.stateTime = bee.stateTime - 1
-                    if bee.stateTime <= 0:
+                    if bee.stateTime == 400 or bee.stateTime == 200: #two extra recruit pings
+                        ui.expandingCircleArray.append(
+                        ui.ExpandingCircle(bee.memoryStore[0].flower.colour,
+                        bee.target.xPos,bee.target.yPos,30))
+                        for recruit in bee.hive.beeArray: #recruit bees
+                            if recruit.state == "Idle":
+                                chance = random.random()
+                                if chance > 0.5:
+                                    recruit.state = "Moving to dance floor"
+                                    recruit.target = sharedfunctions.pointAround(bee.target,
+                                    bee.target.radius)
+                                    bee.target.beesOnFloor.append(recruit)
+                    elif bee.stateTime <= 0:
                         for attendant in bee.target.beesOnFloor:
                             attendant.roundDanced = True
                             attendant.returnToHive()
@@ -134,7 +146,19 @@ while True: #MAIN GAME LOOP
                     else:
                         bee.updatePosition()
                         bee.distanceTravelled = bee.distanceTravelled + bee.vel
-                    if bee.stateTime <= 0:
+                    if bee.stateTime == 400 or bee.stateTime == 200: #two extra recruit pings
+                        ui.expandingCircleArray.append(
+                        ui.ExpandingCircle(bee.memoryStore[0].flower.colour,
+                        bee.target.xPos,bee.target.yPos,30))
+                        for recruit in bee.hive.beeArray: #recruit bees
+                            if recruit.state == "Idle":
+                                chance = random.random()
+                                if chance > 0.5:
+                                    recruit.state = "Moving to dance floor"
+                                    recruit.target = sharedfunctions.pointAround(bee.target,
+                                    bee.target.radius)
+                                    bee.target.beesOnFloor.append(recruit)
+                    elif bee.stateTime <= 0:
                         try:
                             bee.target.occupied = False
                         except:

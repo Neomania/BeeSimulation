@@ -10,10 +10,15 @@
 #-------------------------------------------------------------------------------
 import globalcfg, ui
 def reduceSpeed():
-    if globalcfg.speedMultiplier > 0:
-        globalcfg.speedMultiplier = globalcfg.speedMultiplier - 1
+    if globalcfg.speedMultiplier > 1:
+        globalcfg.speedMultiplier = round(globalcfg.speedMultiplier / 2)
+    else:
+        globalcfg.speedMultiplier = 0
 def increaseSpeed():
-    globalcfg.speedMultiplier = globalcfg.speedMultiplier + 1
+    if globalcfg.speedMultiplier == 0:
+        globalcfg.speedMultiplier = 1
+    else:
+        globalcfg.speedMultiplier = globalcfg.speedMultiplier * 2
 def showDetail():
     for button in ui.buttonArray:
         button.clickable = False
@@ -47,8 +52,10 @@ def toggleFlower():
     globalcfg.flowerPlacing = not globalcfg.flowerPlacing
     if globalcfg.flowerPlacing:
         ui.flowerPlacingDivision.textArray = ["Yes"]
+        ui.updateSummary()
     else:
         ui.flowerPlacingDivision.textArray = ["No"]
+        ui.updateSummary()
 def changeFlowerColour(colour):
     globalcfg.createdFlowerColour = colour
 def increaseFlowerRate():#rounding necessary because of double precision
