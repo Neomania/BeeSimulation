@@ -85,7 +85,7 @@ class textDivision:
     import pygame.freetype
     rect = pygame.Rect
     textArray = []
-    def __init__(self,xPos,yPos,width,height,fontToUse,fontSize,scrollable = False):
+    def __init__(self,xPos,yPos,width,height,fontToUse,fontSize,scrollable = False,colour = (255,255,255)):
         import pygame, math
         import pygame.freetype
         self.xPos = xPos
@@ -97,6 +97,7 @@ class textDivision:
         self.font = fontToUse
         self.scrollAmount = 0
         self.scrollable = scrollable
+        self.colour = colour
         testCharacter = fontToUse.render('abcdefghijklmnopqrstuvwxyz',(255,255,255))
         self.fontSize = (round((testCharacter[0].get_width()/26))
         ,testCharacter[0].get_height())
@@ -280,7 +281,7 @@ buttonArray.append(greyButton)
 
 textDivisionArray = []
 
-infoBoxDivision = (textDivision(760,0,240,300,infoFont,infoFontSize,True)) #INFOBOX
+infoBoxDivision = (textDivision(760,5,230,295,infoFont,infoFontSize,True)) #INFOBOX
 textDivisionArray.append(infoBoxDivision)
 infoBoxDivision.textArray = divideStringIntoList(
 testString,infoBoxDivision.characterWidth)

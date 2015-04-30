@@ -378,8 +378,9 @@ while True: #MAIN GAME LOOP
     #DETAIL BITS
     if globalcfg.displayingDetail == True:
         #DRAW DETAIL BASE
-        ui.detailSurface.fill((0,43,54))
-        pygame.draw.rect(displaySurface,(0,43,54),pygame.Rect(20,20,710,710))
+        #ui.detailSurface.fill((0,43,54))
+        ui.detailSurface.fill((90,90,90))
+        pygame.draw.rect(displaySurface,(90,90,90),pygame.Rect(20,20,711,710))
         lineNumber = 0
         for element in ui.detailElements:
             if type(element) is str:
@@ -419,7 +420,7 @@ while True: #MAIN GAME LOOP
         if div.textArray != None:
             for line in div.textArray:
                 if (lineNumber * (div.fontSize[1] + div.lineSpace)) + div.scrollAmount >= 0 and (lineNumber * (div.fontSize[1] + div.lineSpace)) + div.scrollAmount <= div.height:
-                    div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + div.lineSpace))),line,WHITE)
+                    div.font.render_to(displaySurface,(div.xPos,div.yPos + div.scrollAmount + (lineNumber * (div.fontSize[1] + div.lineSpace))),line,div.colour)
                 else:
                     #print(line)
                     pass

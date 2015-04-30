@@ -11,7 +11,7 @@
 import pygame
 import pygame.freetype
 pygame.freetype.init()
-infoFontSize = 20
+infoFontSize = 18
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
 selectionFontSize = 12
 selectionFont = pygame.freetype.SysFont('Consolas',selectionFontSize)

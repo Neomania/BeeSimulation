@@ -58,6 +58,7 @@ def toggleFlower():
         ui.updateSummary()
 def changeFlowerColour(colour):
     globalcfg.createdFlowerColour = colour
+    ui.flowerPlacingDivision.colour = colour
 def increaseFlowerRate():#rounding necessary because of double precision
     globalcfg.createdFlowerRate = round(globalcfg.createdFlowerRate + 0.1,1)
     ui.pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
