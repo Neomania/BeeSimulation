@@ -1,1 +1,1 @@
-A bee:@@This is a bee! Buzz Buzz!
+A Bee@@This is a bee! It can do various things, so keep an eye on it! Its current task is displayed below. It will visit a maximum of five flowers, then return home.
