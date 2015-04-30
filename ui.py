@@ -244,6 +244,10 @@ buttonArray.append(increasePollenRateButton)
 decreasePollenRateButton = Button(750,575,50,25,
 'assets/ui/decreasePollenRate.png',decreaseFlowerRate)
 buttonArray.append(decreasePollenRateButton)
+addBeeButton = Button(750,700,50,25,'assets/ui/addBee.png',addBee)
+buttonArray.append(addBeeButton)
+removeBeeButton = Button(750,725,50,25,'assets/ui/removeBee.png',removeBee)
+buttonArray.append(removeBeeButton)
 
 #Flower colour buttons
 redButton = Button(750,600,50,50,'assets/ui/redButton.png',changeFlowerColour,
@@ -303,6 +307,10 @@ pollenRateDivision = textDivision(950,573,50,50,pollenRateFont,
 pollenRateFontSize) #displays pollen rate for created flowers
 textDivisionArray.append(pollenRateDivision)
 pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
+
+beeCountDivision = textDivision(920,720,80,25,speedFont,speedFontSize)
+textDivisionArray.append(beeCountDivision)
+beeCountDivision.textArray = [str(globalcfg.beeCount)]
 
 #DETAILS
 detailSurface = pygame.Surface((700,750))

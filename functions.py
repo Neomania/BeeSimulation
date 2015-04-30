@@ -66,6 +66,13 @@ def decreaseFlowerRate():
     if globalcfg.createdFlowerRate >= 0.1:
         globalcfg.createdFlowerRate = round(globalcfg.createdFlowerRate - 0.1,1)
     ui.pollenRateDivision.textArray = [str(round(globalcfg.createdFlowerRate,1))]
+def addBee():
+    globalcfg.beeCount = globalcfg.beeCount + 1
+    ui.beeCountDivision.textArray = [str(globalcfg.beeCount)]
+def removeBee():
+    if globalcfg.beeCount > 0:
+        globalcfg.beeCount = globalcfg.beeCount - 1
+    ui.beeCountDivision.textArray = [str(globalcfg.beeCount)]
 
 def divideStringIntoList(stringToDivide,lineLength): #@ is a line break
     stringLength = len(stringToDivide) - 1

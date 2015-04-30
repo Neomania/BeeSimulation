@@ -85,8 +85,10 @@ pygame.freetype.init()
 
 infoFontSize = 12
 infoFont = pygame.freetype.SysFont('Consolas',infoFontSize)
-for i in range(0,25):
+for i in range(0,globalcfg.beeCount):
     beeArray.append(Bee(home))
+activeBees = globalcfg.beeCount #tracks actual number of bees versus desired
+#better than calling len(beeArray) all the time
 
 detailOverlay = pygame.image.load('assets/ui/detailoverlay.png')
 detailUnderlay = pygame.image.load('assets/ui/detailunderlay.png')
@@ -447,5 +449,15 @@ while True: #MAIN GAME LOOP
             displaySurface.blit(button.spriteSheet,
             button.rect,
             button.unclickableRect)
+    #Cleaning up extra bees
+    if activeBees > globalcfg.beeCount:
+        for bee in beeArray:
+            if bee.state == "Idle" and bee != globalcfg.selectedItem and (
+            activeBees > globalcfg.beeCount):
+                beeArray.remove(bee)
+                activeBees = activeBees - 1
+    elif activeBees < globalcfg.beeCount:
+        beeArray.append(Bee(home))
+        activeBees = activeBees + 1
     pygame.display.update()
     clock.tick(FPS)

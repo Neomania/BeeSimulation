@@ -7,3 +7,4 @@ selectedBeeArray = []
 flowerPlacing = False
 createdFlowerRate = 1.0
 createdFlowerColour = (255,255,255)
+beeCount = 25
